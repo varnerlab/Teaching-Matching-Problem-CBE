@@ -1,8 +1,6 @@
 # Edge file for Balanced Bipartite Graph
 # Record: source, target, cost, lb capacity, ub capacity
-# source: 1 = source node, 2,3,4 = people nodes, 5,6,7 = job nodes, 8,9,10 = sink nodes
-# wij: cost of assigning person i to job j. If negative, faculty i prefers course j, 0 indicates no preference, 
-# positive indicates dislike.
+# wij: cost of assigning person i to job j. If negative, faculty i prefers course j, 0 indicates no preference, positive indicates dislike.
 
 # BOS : Beginning of Semester (BOS) node = 1
 # People nodes = 2,...,32
