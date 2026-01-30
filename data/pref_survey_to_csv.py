@@ -125,6 +125,8 @@ def main() -> None:
     if rows:
         out = pd.concat([out, pd.DataFrame(rows)], ignore_index=True)
 
+    out["lastname"] = out["lastname"].astype(str).str.replace(" ", "-", regex=False)
+
     # Ensure integer output.
     for col in course_cols:
         out[col] = out[col].astype(int)
