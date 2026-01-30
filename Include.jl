@@ -30,6 +30,7 @@ using PrettyTables
 using CSV
 using DataFrames
 using FileIO
+using JLD2
 
 # setup random number generator -
 Random.seed!(1234); # seed the random number generator for reproducibility
