@@ -1,0 +1,376 @@
+"""
+    run_matching.jl
+
+Solve the two-semester (Fall 2026 + Spring 2027) faculty-course teaching
+assignment problem using a min-cost max-flow LP formulation, and write the
+optimal assignments to a CSV file.
+
+Usage:
+    julia --project=. run_matching.jl
+
+Output:
+    results/Faculty-Course-Assignments-AY-2026-2027.csv
+"""
+
+# ===== Load packages and project code ========================================
+include(joinpath(@__DIR__, "Include.jl"));
+
+# ===== Function definitions ==================================================
+
+"""
+    edgerecordparser(record::String, delim::Char=',') -> Tuple | Nothing
+
+Parse a single line from the edgelist file into a 5-tuple:
+(source::Int, target::Int, cost::Float64, lb::Float64, ub::Float64).
+
+Returns `nothing` if the line does not contain at least 5 fields
+(e.g., blank lines or malformed records).
+"""
+function edgerecordparser(record::String, delim::Char=',')
+
+    fields = split(record, delim)
+    if length(fields) < 5
+        return nothing
+    end
+
+    source = parse(Int, fields[1])
+    target = parse(Int, fields[2])
+    cost   = parse(Float64, fields[3])
+    lb     = parse(Float64, fields[4])
+    ub     = parse(Float64, fields[5])
+
+    return (source, target, cost, lb, ub)
+end
+
+
+"""
+    build_capacity_bounds(model::MyDirectedBipartiteGraphModel) -> Array{Float64,2}
+
+Extract the capacity lower and upper bounds from the graph model into an
+(N_edges × 2) matrix. Column 1 = lower bound, column 2 = upper bound.
+"""
+function build_capacity_bounds(model::MyDirectedBipartiteGraphModel)
+
+    capacity = model.capacity
+    number_of_edges = length(model.edges)
+    bounds = Array{Float64,2}(undef, number_of_edges, 2)
+
+    for (k, v) in model.edgesinverse
+        bounds[k, 1] = capacity[v][1]
+        bounds[k, 2] = capacity[v][2]
+    end
+
+    return bounds
+end
+
+
+"""
+    build_cost_vector(model::MyDirectedBipartiteGraphModel) -> Array{Float64,1}
+
+Extract the edge cost (weight) vector from the graph model into a length-N_edges
+array, ordered by edge index.
+"""
+function build_cost_vector(model::MyDirectedBipartiteGraphModel)
+
+    number_of_edges = length(model.edges)
+    weights = model.edges
+    cost_vector = Array{Float64,1}(undef, number_of_edges)
+
+    for (k, v) in model.edgesinverse
+        cost_vector[k] = weights[v]
+    end
+
+    return cost_vector
+end
+
+
+"""
+    apply_cost_override!(model, cost_vector, graph_info, faculty_df, fall_courses_df, spring_courses_df,
+        faculty_name, course_name, semester; wv=-1.0)
+
+Set the cost on a specific (gateway → course) edge to `wv`. This is used to
+encode strong faculty-course preferences that go beyond the survey data.
+
+# Arguments
+- `faculty_name::String`: faculty last name (must match Faculty.csv)
+- `course_name::String`: course code, e.g. "CHEME-3130"
+- `semester::Symbol`: `:fall` or `:spring`
+- `wv::Float64`: cost value to assign (default -1.0 = strong preference)
+"""
+function apply_cost_override!(model::MyDirectedBipartiteGraphModel,
+    cost_vector::Array{Float64,1}, graph_info::Dict{String,Any},
+    faculty_df::DataFrame, fall_courses_df::DataFrame, spring_courses_df::DataFrame,
+    faculty_name::String, course_name::String, semester::Symbol; wv::Float64 = -1.0)
+
+    idx = findfirst(==(faculty_name), faculty_df[!, :name])
+    if isnothing(idx)
+        @warn "Faculty not found: $faculty_name"
+        return
+    end
+
+    if semester == :fall
+        gateway_node = graph_info["fall_gateway_nodes"][idx]
+        ci = findfirst(==(course_name), fall_courses_df[!, :course])
+        if isnothing(ci)
+            @warn "Fall course not found: $course_name"
+            return
+        end
+        course_node = graph_info["fall_course_nodes"][ci]
+    else
+        gateway_node = graph_info["spring_gateway_nodes"][idx]
+        ci = findfirst(==(course_name), spring_courses_df[!, :course])
+        if isnothing(ci)
+            @warn "Spring course not found: $course_name"
+            return
+        end
+        course_node = graph_info["spring_course_nodes"][ci]
+    end
+
+    update_cost_array!(model, cost_vector, wv=wv, faculty=gateway_node, course=course_node)
+end
+
+
+"""
+    build_incidence_matrix(model::MyDirectedBipartiteGraphModel) -> Array{Float64,2}
+
+Build the (N_nodes × N_edges) node-edge incidence matrix for the flow
+conservation constraints. Entry A[s, e] = -1 if edge e leaves node s,
+A[t, e] = +1 if edge e enters node t.
+"""
+function build_incidence_matrix(model::MyDirectedBipartiteGraphModel)
+
+    n_nodes = length(model.nodes)
+    n_edges = length(model.edges)
+    A = zeros(n_nodes, n_edges)
+
+    for (k, v) in model.edgesinverse
+        A[v[1], k] = -1.0  # outgoing
+        A[v[2], k] =  1.0  # incoming
+    end
+
+    return A
+end
+
+
+"""
+    build_flow_balance(model::MyDirectedBipartiteGraphModel, F::Float64) -> Array{Float64,1}
+
+Build the right-hand-side vector b for flow conservation. The source node
+supplies F units of flow (b[source] = -F), the sink absorbs them (b[sink] = F),
+and all other nodes are balanced (b[i] = 0).
+"""
+function build_flow_balance(model::MyDirectedBipartiteGraphModel, F::Float64)
+
+    n_nodes = length(model.nodes)
+    b = zeros(n_nodes)
+    b[model.source] = -F
+    b[model.sink]   =  F
+
+    return b
+end
+
+
+"""
+    extract_flow(model::MyDirectedBipartiteGraphModel, solution::Dict) -> Dict{Tuple{Int,Int}, Float64}
+
+Convert the LP solution vector into a dictionary mapping (source, target) node
+pairs to their flow values.
+"""
+function extract_flow(model::MyDirectedBipartiteGraphModel, solution::Dict)
+
+    flow = Dict{Tuple{Int,Int}, Float64}()
+    flow_vector = solution["argmax"]
+
+    for (k, v) in model.edgesinverse
+        flow[(v[1], v[2])] = flow_vector[k]
+    end
+
+    return flow
+end
+
+
+"""
+    build_assignments_dataframe(graph_info, faculty_df, fall_courses_df, spring_courses_df,
+        fall_matching, spring_matching) -> DataFrame
+
+Build a tidy DataFrame of faculty assignments across both semesters, sorted
+alphabetically by faculty name. Columns: Faculty, Fall_Course, Fall_Title,
+Spring_Course, Spring_Title, Fall_Load, Spring_Load, Total_Load.
+"""
+function build_assignments_dataframe(graph_info::Dict{String,Any},
+    faculty_df::DataFrame, fall_courses_df::DataFrame, spring_courses_df::DataFrame,
+    fall_matching::Dict{String, Vector{String}}, spring_matching::Dict{String, Vector{String}})
+
+    rows = NamedTuple[]
+    for i in 1:graph_info["N_faculty"]
+        name = String(faculty_df[i, :name])
+        fc = get(fall_matching, name, String[])
+        sc = get(spring_matching, name, String[])
+
+        fall_titles = [String(fall_courses_df[fall_courses_df.course .== c, :title][1]) for c in fc]
+        spring_titles = [String(spring_courses_df[spring_courses_df.course .== c, :title][1]) for c in sc]
+
+        push!(rows, (
+            Faculty       = name,
+            Fall_Course   = join(fc, "; "),
+            Fall_Title    = join(fall_titles, "; "),
+            Spring_Course = join(sc, "; "),
+            Spring_Title  = join(spring_titles, "; "),
+            Fall_Load     = length(fc),
+            Spring_Load   = length(sc),
+            Total_Load    = length(fc) + length(sc),
+        ))
+    end
+
+    df = DataFrame(rows)
+    sort!(df, :Faculty)
+
+    return df
+end
+
+
+# ===== Configuration: cost overrides =========================================
+# Strong faculty-course preferences beyond the survey data.
+# Each tuple is (faculty_name, course_name, semester).
+# Add or remove entries here to adjust the optimization.
+
+const COST_OVERRIDES = [
+
+    # Fall: Core undergraduate
+    ("Godwin",   "ENGRI-1120", :fall),
+    ("Celik",    "CHEME-2880", :fall),
+    ("Duncan",   "ENGRD-2190", :fall),
+    ("Hanrath",  "CHEME-3130", :fall),
+    ("Goldfarb", "CHEME-3240", :fall),
+    ("Bauer",    "CHEME-4320", :fall),
+
+    # Fall: Elective undergraduate
+    ("Varner", "CHEME-4800", :fall),
+    ("Varner", "CHEME-5660", :fall),
+    ("Tester", "CHEME-4840", :fall),
+    ("Tester", "CHEME-4880", :fall),
+
+    # Fall: M.Eng
+    ("Bauer",  "CHEME-5020", :fall),
+    ("Bauer",  "CHEME-5650", :fall),
+    ("Cleary", "CHEME-5770", :fall),
+
+    # Fall: Graduate core
+    ("Escobedo", "CHEME-6110", :fall),
+    ("Yue",      "CHEME-6130", :fall),
+    ("Stroock",  "CHEME-6230", :fall),
+    ("Kowal",    "CHEME-6920", :fall),
+
+    # Fall: Graduate elective
+    ("Kalra",   "CHEME-5310", :fall),
+    ("Putnam",  "CHEME-6310", :fall),
+    ("Koch",    "CHEME-6440", :fall),
+    ("Hanrath", "CHEME-6662", :fall),
+    ("Tester",  "CHEME-6681", :fall),
+    ("Tester",  "CHEME-6660", :fall),
+    ("You",     "CHEME-6800", :fall),
+    ("You",     "CHEME-6810", :fall),
+    ("You",     "CHEME-6830", :fall),
+    ("You",     "CHEME-6840", :fall),
+
+    # Spring: Add overrides here as needed
+    # ("FacultyName", "CHEME-XXXX", :spring),
+];
+
+
+# ===== Main computation ======================================================
+
+function main()
+
+    # Step 1: Generate the graph edgelist from CSV inputs
+    println("Generating graph...")
+    graph_info = generate_edgelist(
+        faculty_csv            = joinpath(_PATH_TO_DATA, "Faculty.csv"),
+        fall_courses_csv       = joinpath(_PATH_TO_DATA, "Courses-Fall-2026.csv"),
+        spring_courses_csv     = joinpath(_PATH_TO_DATA, "Courses-Spring-2027.csv"),
+        fall_preferences_csv   = joinpath(_PATH_TO_DATA, "Faculty-Course-Preferences-Fall-2026.csv"),
+        spring_preferences_csv = joinpath(_PATH_TO_DATA, "Faculty-Course-Preferences-Spring-2027.csv"),
+        output_edgelist        = joinpath(_PATH_TO_DATA, "Faculty-Courses-Bipartite-AY-2026-2027.edgelist"),
+    )
+
+    faculty_df        = graph_info["faculty_df"]
+    fall_courses_df   = graph_info["fall_courses_df"]
+    spring_courses_df = graph_info["spring_courses_df"]
+
+    println("  $(graph_info["N_nodes"]) nodes | $(graph_info["N_faculty"]) faculty | " *
+            "$(graph_info["N_fall_courses"]) fall courses | $(graph_info["N_spring_courses"]) spring courses")
+    println("  Total flow F = $(graph_info["F"])")
+
+    # Step 2: Parse the edgelist and build the directed graph model
+    println("Building graph model...")
+    edge_file = joinpath(_PATH_TO_DATA, "Faculty-Courses-Bipartite-AY-2026-2027.edgelist")
+    edge_models = MyConstrainedGraphEdgeModels(edge_file, edgerecordparser, delim=',', comment='#')
+    model = build(MyDirectedBipartiteGraphModel, (
+        s = graph_info["BOS"], t = graph_info["EOS"], edges = edge_models,
+    ))
+
+    # Step 3: Extract capacity bounds and cost vector from graph
+    bounds = build_capacity_bounds(model)
+    cost_vector = build_cost_vector(model)
+
+    # Step 4: Apply manual cost overrides
+    for (faculty_name, course_name, semester) in COST_OVERRIDES
+        apply_cost_override!(model, cost_vector, graph_info,
+            faculty_df, fall_courses_df, spring_courses_df,
+            faculty_name, course_name, semester)
+    end
+
+    # Step 5: Build LP components and solve
+    println("Solving LP...")
+    A = build_incidence_matrix(model)
+    b = build_flow_balance(model, graph_info["F"])
+
+    problem = build(MyLinearProgrammingProblemModel, (
+        c = -cost_vector, A = A, b = b,
+        lb = bounds[:, 1], ub = bounds[:, 2],
+    ))
+
+    solution = solve(problem)
+    println("  Objective = $(solution["objective_value"])")
+
+    # Step 6: Extract flow and faculty-course assignments
+    flow = extract_flow(model, solution)
+
+    fall_matching = extract_matching(flow,
+        graph_info["fall_gateway_nodes"], graph_info["fall_course_nodes"],
+        faculty_df, fall_courses_df,
+    )
+    spring_matching = extract_matching(flow,
+        graph_info["spring_gateway_nodes"], graph_info["spring_course_nodes"],
+        faculty_df, spring_courses_df,
+    )
+
+    # Step 7: Build output DataFrame and write CSV
+    output_df = build_assignments_dataframe(graph_info,
+        faculty_df, fall_courses_df, spring_courses_df,
+        fall_matching, spring_matching,
+    )
+
+    output_path = joinpath(_PATH_TO_RESULTS, "Faculty-Course-Assignments-AY-2026-2027.csv")
+    CSV.write(output_path, output_df)
+
+    # Step 8: Print summary
+    println("\n" * "="^90)
+    println("  Faculty Teaching Assignments — AY 2026-2027")
+    println("="^90)
+    pretty_table(
+        output_df[:, [:Faculty, :Fall_Course, :Spring_Course, :Fall_Load, :Spring_Load, :Total_Load]];
+        backend = :text,
+        alignment = [:l, :l, :l, :c, :c, :c],
+    )
+
+    n_fall = sum(output_df.Fall_Load)
+    n_spring = sum(output_df.Spring_Load)
+    println("Fall:   $n_fall / $(graph_info["N_fall_courses"]) courses assigned")
+    println("Spring: $n_spring / $(graph_info["N_spring_courses"]) courses assigned")
+    println("Total:  $(n_fall + n_spring) assignments across $(graph_info["N_faculty"]) faculty")
+    println("\nResults written to: $output_path")
+end
+
+# Run
+main()
