@@ -1,33 +1,34 @@
-course,credits,title
-CHEME-2200,4,Physical Chemistry II for Engineers
-CHEME-3010,1,Career Perspectives
-CHEME-3230,4,Fluid Mechanics
-CHEME-3320,4,Analysis of Separation Processes
-CHEME-3720,2,Introduction to Process Dynamics and Control
-CHEME-3900,4,Chemical Kinetics and Reactor Design
-CHEME-4020,3,Molecular Principles of Biomedical Engineering
-CHEME-4410,3,Air Pollution Control
-CHEME-4620,4,Chemical Engineering Design
-CHEME-4900,1,Undergraduate Projects in Chemical Engineering
-CHEME-4998,6,International Research Internship
-CHEME-5235,3,Design of Soft Materials
-CHEME-5240,2,Chemical Process Safety Management
-CHEME-5430,3,Bioprocess Engineering
-CHEME-5440,3,Kinetics and Dynamics in Molecular and Cellular Systems
-CHEME-5460,1,Introduction to Synthetic Biology
-CHEME-5540,3,Principles of Molecular Simulation
-CHEME-5650,1,Design Project
-CHEME-5651,1,M. Eng. Design Project Studio
-CHEME-5820,4,Machine Learning and Artificial Intelligence Methods for Engineers
-CHEME-5880,1,Energy Seminar II
-CHEME-5990,1,Medical and Industrial Biotechnology Seminar
-CHEME-5999,1,Special Projects in Chemical Engineering
-CHEME-6240,3,Advanced Fluid Mechanics and Heat Transfer
-CHEME-6430,3,Kinetics and Dynamics in Molecular and Cellular Systems
-CHEME-6610,3,Air Pollution Control
-CHEME-6663,1,Geothermal Energy Module
-CHEME-6664,1,Hydrokinetic and Aerodynamic Energy Module
-CHEME-6679,1,Energy Storage Module
-CHEME-6681,1,Energy Analysis Project
-CHEME-6682,1,Energy Economics for Engineers
-CHEME-6810,3,AI for Sustainability
+course,credits,required,title
+CHEME-2200,4,true,Physical Chemistry II for Engineers
+CHEME-3010,1,false,Career Perspectives
+CHEME-3230,4,true,Fluid Mechanics
+CHEME-3320,4,true,Analysis of Separation Processes
+CHEME-3720,2,true,Introduction to Process Dynamics and Control
+CHEME-3900,4,true,Chemical Kinetics and Reactor Design
+CHEME-4020,3,false,Molecular Principles of Biomedical Engineering
+CHEME-4410,3,false,Air Pollution Control
+CHEME-4620,4,true,Chemical Engineering Design
+CHEME-4900,1,false,Undergraduate Projects in Chemical Engineering
+CHEME-4998,6,false,International Research Internship
+CHEME-5235,3,false,Design of Soft Materials
+CHEME-5240,2,false,Chemical Process Safety Management
+CHEME-5430,3,false,Bioprocess Engineering
+CHEME-5440,3,false,Kinetics and Dynamics in Molecular and Cellular Systems
+CHEME-5460,1,false,Introduction to Synthetic Biology
+CHEME-5540,3,false,Principles of Molecular Simulation
+CHEME-5650,1,false,Design Project
+CHEME-5651,1,false,M. Eng. Design Project Studio
+CHEME-5820,4,false,Machine Learning and Artificial Intelligence Methods for Engineers
+CHEME-5880,1,false,Energy Seminar II
+CHEME-5990,1,false,Medical and Industrial Biotechnology Seminar
+CHEME-5999,1,false,Special Projects in Chemical Engineering
+CHEME-6240,3,true,Advanced Fluid Mechanics and Heat Transfer
+CHEME-6420,3,true,Chemical Kinetics and Transport
+CHEME-6430,3,false,Kinetics and Dynamics in Molecular and Cellular Systems
+CHEME-6610,3,false,Air Pollution Control
+CHEME-6663,1,false,Geothermal Energy Module
+CHEME-6664,1,false,Hydrokinetic and Aerodynamic Energy Module
+CHEME-6679,1,false,Energy Storage Module
+CHEME-6681,1,false,Energy Analysis Project
+CHEME-6682,1,false,Energy Economics for Engineers
+CHEME-6810,3,false,AI for Sustainability

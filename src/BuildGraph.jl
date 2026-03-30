@@ -119,16 +119,18 @@ function generate_edgelist(;
         end
     end
 
-    # 6. Fall Course → Fall Completion
-    push!(edges, "# Fall Course -> Fall Completion")
+    # 6. Fall Course → Fall Completion (lb=1 for required courses)
+    push!(edges, "# Fall Course -> Fall Completion (lb=1 if required)")
     for j in 1:N_cF
-        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,0.0,1.0")
+        lb = _is_required(fall_courses_df, j) ? 1.0 : 0.0
+        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,$(lb),1.0")
     end
 
-    # 7. Spring Course → Spring Completion
-    push!(edges, "# Spring Course -> Spring Completion")
+    # 7. Spring Course → Spring Completion (lb=1 for required courses)
+    push!(edges, "# Spring Course -> Spring Completion (lb=1 if required)")
     for j in 1:N_cS
-        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,0.0,1.0")
+        lb = _is_required(spring_courses_df, j) ? 1.0 : 0.0
+        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,$(lb),1.0")
     end
 
     # 8. Fall Completion → EOS
@@ -179,6 +181,21 @@ function generate_edgelist(;
         "fall_courses_df" => fall_courses_df,
         "spring_courses_df" => spring_courses_df,
     )
+end
+
+
+"""
+    _is_required(courses_df, row_index) -> Bool
+
+Check if a course is marked as required. Returns `false` if the `required`
+column is missing from the DataFrame.
+"""
+function _is_required(courses_df::DataFrame, j::Int)
+    if hasproperty(courses_df, :required)
+        val = courses_df[j, :required]
+        return val === true || val == "true" || val == 1
+    end
+    return false
 end
 
 
