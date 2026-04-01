@@ -11,7 +11,7 @@ CHEME-4620,4,true,4,Chemical Engineering Design
 CHEME-4900,1,false,1,Undergraduate Projects in Chemical Engineering
 CHEME-4998,6,false,1,International Research Internship
 CHEME-5235,3,false,1,Design of Soft Materials
-CHEME-5240,2,false,1,Chemical Process Safety Management
+CHEME-5240,2,true,1,Chemical Process Safety Management
 CHEME-5430,3,false,1,Bioprocess Engineering
 CHEME-5440,3,false,1,Kinetics and Dynamics in Molecular and Cellular Systems
 CHEME-5460,1,false,1,Introduction to Synthetic Biology
@@ -23,6 +23,7 @@ CHEME-5880,1,false,1,Energy Seminar II
 CHEME-5990,1,false,1,Medical and Industrial Biotechnology Seminar
 CHEME-5999,1,false,1,Special Projects in Chemical Engineering
 CHEME-6240,3,true,1,Advanced Fluid Mechanics and Heat Transfer
+CHEME-6400,3,false,1,Polymeric Materials
 CHEME-6420,3,true,1,Chemical Kinetics and Transport
 CHEME-6430,3,false,1,Kinetics and Dynamics in Molecular and Cellular Systems
 CHEME-6610,3,false,1,Air Pollution Control
