@@ -119,30 +119,34 @@ function generate_edgelist(;
         end
     end
 
-    # 6. Fall Course → Fall Completion (lb=1 for required courses)
-    push!(edges, "# Fall Course -> Fall Completion (lb=1 if required)")
+    # 6. Fall Course → Fall Completion (lb=1 for required, ub=max_faculty)
+    push!(edges, "# Fall Course -> Fall Completion (lb=1 if required, ub=max_faculty)")
     for j in 1:N_cF
         lb = _is_required(fall_courses_df, j) ? 1.0 : 0.0
-        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,$(lb),1.0")
+        ub = _max_faculty(fall_courses_df, j)
+        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,$(lb),$(ub)")
     end
 
-    # 7. Spring Course → Spring Completion (lb=1 for required courses)
-    push!(edges, "# Spring Course -> Spring Completion (lb=1 if required)")
+    # 7. Spring Course → Spring Completion (lb=1 for required, ub=max_faculty)
+    push!(edges, "# Spring Course -> Spring Completion (lb=1 if required, ub=max_faculty)")
     for j in 1:N_cS
         lb = _is_required(spring_courses_df, j) ? 1.0 : 0.0
-        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,$(lb),1.0")
+        ub = _max_faculty(spring_courses_df, j)
+        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,$(lb),$(ub)")
     end
 
     # 8. Fall Completion → EOS
     push!(edges, "# Fall Completion -> EOS")
     for j in 1:N_cF
-        push!(edges, "$(fall_comp_nodes[j]),$eos,0.0,0.0,1.0")
+        ub = _max_faculty(fall_courses_df, j)
+        push!(edges, "$(fall_comp_nodes[j]),$eos,0.0,0.0,$(ub)")
     end
 
     # 9. Spring Completion → EOS
     push!(edges, "# Spring Completion -> EOS")
     for j in 1:N_cS
-        push!(edges, "$(spring_comp_nodes[j]),$eos,0.0,0.0,1.0")
+        ub = _max_faculty(spring_courses_df, j)
+        push!(edges, "$(spring_comp_nodes[j]),$eos,0.0,0.0,$(ub)")
     end
 
     # --- Write edgelist ---
@@ -196,6 +200,21 @@ function _is_required(courses_df::DataFrame, j::Int)
         return val === true || val == "true" || val == 1
     end
     return false
+end
+
+
+"""
+    _max_faculty(courses_df, row_index) -> Float64
+
+Return the maximum number of faculty that can be assigned to a course.
+Defaults to 1.0 if the `max_faculty` column is missing.
+"""
+function _max_faculty(courses_df::DataFrame, j::Int)
+    if hasproperty(courses_df, :max_faculty)
+        val = courses_df[j, :max_faculty]
+        return Float64(val)
+    end
+    return 1.0
 end
 
 

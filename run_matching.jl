@@ -201,6 +201,20 @@ function build_assignments_dataframe(graph_info::Dict{String,Any},
     faculty_df::DataFrame, fall_courses_df::DataFrame, spring_courses_df::DataFrame,
     fall_matching::Dict{String, Vector{String}}, spring_matching::Dict{String, Vector{String}})
 
+    # Count how many faculty are assigned to each course
+    fall_course_count = Dict{String,Int}()
+    for courses in values(fall_matching)
+        for c in courses
+            fall_course_count[c] = get(fall_course_count, c, 0) + 1
+        end
+    end
+    spring_course_count = Dict{String,Int}()
+    for courses in values(spring_matching)
+        for c in courses
+            spring_course_count[c] = get(spring_course_count, c, 0) + 1
+        end
+    end
+
     rows = NamedTuple[]
     for i in 1:graph_info["N_faculty"]
         name = String(faculty_df[i, :name])
@@ -210,15 +224,26 @@ function build_assignments_dataframe(graph_info::Dict{String,Any},
         fall_titles = [String(fall_courses_df[fall_courses_df.course .== c, :title][1]) for c in fc]
         spring_titles = [String(spring_courses_df[spring_courses_df.course .== c, :title][1]) for c in sc]
 
+        # Credit hours: divide course credits by number of faculty assigned
+        fall_credits = sum(
+            Float64(fall_courses_df[fall_courses_df.course .== c, :credits][1]) / fall_course_count[c]
+            for c in fc; init=0.0)
+        spring_credits = sum(
+            Float64(spring_courses_df[spring_courses_df.course .== c, :credits][1]) / spring_course_count[c]
+            for c in sc; init=0.0)
+
         push!(rows, (
-            Faculty       = name,
-            Fall_Course   = join(fc, "; "),
-            Fall_Title    = join(fall_titles, "; "),
-            Spring_Course = join(sc, "; "),
-            Spring_Title  = join(spring_titles, "; "),
-            Fall_Load     = length(fc),
-            Spring_Load   = length(sc),
-            Total_Load    = length(fc) + length(sc),
+            Faculty        = name,
+            Fall_Course    = join(fc, "; "),
+            Fall_Title     = join(fall_titles, "; "),
+            Spring_Course  = join(sc, "; "),
+            Spring_Title   = join(spring_titles, "; "),
+            Fall_Load      = length(fc),
+            Spring_Load    = length(sc),
+            Total_Load     = length(fc) + length(sc),
+            Fall_Credits   = fall_credits,
+            Spring_Credits = spring_credits,
+            Total_Credits  = fall_credits + spring_credits,
         ))
     end
 
@@ -229,53 +254,17 @@ function build_assignments_dataframe(graph_info::Dict{String,Any},
 end
 
 
-# ===== Configuration: cost overrides =========================================
-# Strong faculty-course preferences beyond the survey data.
-# Each tuple is (faculty_name, course_name, semester).
-# Add or remove entries here to adjust the optimization.
+"""
+    load_cost_overrides(filepath::String) -> Vector{Tuple{String, String, Symbol}}
 
-const COST_OVERRIDES = [
-
-    # Fall: Core undergraduate
-    ("Godwin",   "ENGRI-1120", :fall),
-    ("Celik",    "CHEME-2880", :fall),
-    ("Duncan",   "ENGRD-2190", :fall),
-    ("Hanrath",  "CHEME-3130", :fall),
-    ("Goldfarb", "CHEME-3240", :fall),
-    ("Bauer",    "CHEME-4320", :fall),
-
-    # Fall: Elective undergraduate
-    ("Varner", "CHEME-4800", :fall),
-    ("Varner", "CHEME-5660", :fall),
-    ("Tester", "CHEME-4840", :fall),
-    ("Tester", "CHEME-4880", :fall),
-
-    # Fall: M.Eng
-    ("Bauer",  "CHEME-5020", :fall),
-    ("Bauer",  "CHEME-5650", :fall),
-    ("Cleary", "CHEME-5770", :fall),
-
-    # Fall: Graduate core
-    ("Escobedo", "CHEME-6110", :fall),
-    ("Yue",      "CHEME-6130", :fall),
-    ("Stroock",  "CHEME-6230", :fall),
-    ("Kowal",    "CHEME-6920", :fall),
-
-    # Fall: Graduate elective
-    ("Kalra",   "CHEME-5310", :fall),
-    ("Putnam",  "CHEME-6310", :fall),
-    ("Koch",    "CHEME-6440", :fall),
-    ("Hanrath", "CHEME-6662", :fall),
-    ("Tester",  "CHEME-6681", :fall),
-    ("Tester",  "CHEME-6660", :fall),
-    ("You",     "CHEME-6800", :fall),
-    ("You",     "CHEME-6810", :fall),
-    ("You",     "CHEME-6830", :fall),
-    ("You",     "CHEME-6840", :fall),
-
-    # Spring: Add overrides here as needed
-    # ("FacultyName", "CHEME-XXXX", :spring),
-];
+Load cost overrides from a CSV file with columns: faculty, course, semester.
+Each row becomes a (faculty_name, course_code, :fall/:spring) tuple that will
+have its edge cost set to -1.0 during optimization.
+"""
+function load_cost_overrides(filepath::String)
+    df = CSV.read(filepath, DataFrame, comment="#")
+    return [(String(row.faculty), String(row.course), Symbol(row.semester)) for row in eachrow(df)]
+end
 
 
 # ===== Main computation ======================================================
@@ -285,9 +274,9 @@ function main()
     # Step 1: Generate the graph edgelist from CSV inputs
     println("Generating graph...")
     graph_info = generate_edgelist(
-        faculty_csv            = joinpath(_PATH_TO_DATA, "Faculty.csv"),
-        fall_courses_csv       = joinpath(_PATH_TO_DATA, "Courses-Fall-2026.csv"),
-        spring_courses_csv     = joinpath(_PATH_TO_DATA, "Courses-Spring-2027.csv"),
+        faculty_csv            = joinpath(_PATH_TO_CONFIG, "Faculty.csv"),
+        fall_courses_csv       = joinpath(_PATH_TO_CONFIG, "Courses-Fall-2026.csv"),
+        spring_courses_csv     = joinpath(_PATH_TO_CONFIG, "Courses-Spring-2027.csv"),
         fall_preferences_csv   = joinpath(_PATH_TO_DATA, "Faculty-Course-Preferences-Fall-2026.csv"),
         spring_preferences_csv = joinpath(_PATH_TO_DATA, "Faculty-Course-Preferences-Spring-2027.csv"),
         output_edgelist        = joinpath(_PATH_TO_DATA, "Faculty-Courses-Bipartite-AY-2026-2027.edgelist"),
@@ -313,8 +302,10 @@ function main()
     bounds = build_capacity_bounds(model)
     cost_vector = build_cost_vector(model)
 
-    # Step 4: Apply manual cost overrides
-    for (faculty_name, course_name, semester) in COST_OVERRIDES
+    # Step 4: Apply manual cost overrides from CSV
+    cost_overrides = load_cost_overrides(joinpath(_PATH_TO_CONFIG, "Cost-Overrides-AY-2026-2027.csv"))
+    println("  Loaded $(length(cost_overrides)) cost overrides")
+    for (faculty_name, course_name, semester) in cost_overrides
         apply_cost_override!(model, cost_vector, graph_info,
             faculty_df, fall_courses_df, spring_courses_df,
             faculty_name, course_name, semester)
@@ -330,7 +321,7 @@ function main()
         lb = bounds[:, 1], ub = bounds[:, 2],
     ))
 
-    solution = solve(problem)
+    solution = solve(problem, constraints = :eq)
     println("  Objective = $(solution["objective_value"])")
 
     # Step 6: Extract flow and faculty-course assignments
@@ -359,15 +350,20 @@ function main()
     println("  Faculty Teaching Assignments — AY 2026-2027")
     println("="^90)
     pretty_table(
-        output_df[:, [:Faculty, :Fall_Course, :Spring_Course, :Fall_Load, :Spring_Load, :Total_Load]];
+        output_df[:, [:Faculty, :Fall_Course, :Spring_Course, :Fall_Load, :Spring_Load, :Total_Load, :Fall_Credits, :Spring_Credits, :Total_Credits]];
         backend = :text,
-        alignment = [:l, :l, :l, :c, :c, :c],
+        table_format = TextTableFormat(borders = text_table_borders__compact),
+        alignment = [:l, :l, :l, :c, :c, :c, :c, :c, :c],
+        fit_table_in_display_horizontally = false,
+        fit_table_in_display_vertically = false,
     )
 
     n_fall = sum(output_df.Fall_Load)
     n_spring = sum(output_df.Spring_Load)
-    println("Fall:   $n_fall / $(graph_info["N_fall_courses"]) courses assigned")
-    println("Spring: $n_spring / $(graph_info["N_spring_courses"]) courses assigned")
+    fall_slots = hasproperty(fall_courses_df, :max_faculty) ? sum(fall_courses_df.max_faculty) : graph_info["N_fall_courses"]
+    spring_slots = hasproperty(spring_courses_df, :max_faculty) ? sum(spring_courses_df.max_faculty) : graph_info["N_spring_courses"]
+    println("Fall:   $n_fall / $fall_slots slots assigned ($(graph_info["N_fall_courses"]) courses)")
+    println("Spring: $n_spring / $spring_slots slots assigned ($(graph_info["N_spring_courses"]) courses)")
     println("Total:  $(n_fall + n_spring) assignments across $(graph_info["N_faculty"]) faculty")
     println("\nResults written to: $output_path")
 end
