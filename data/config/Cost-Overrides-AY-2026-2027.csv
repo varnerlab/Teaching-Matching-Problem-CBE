@@ -20,6 +20,8 @@ Engstrom,CHEME-4840,fall
 # Fall: M.Eng
 Bauer,CHEME-5020,fall
 Bauer,CHEME-5650,fall
+Celik,CHEME-5650,fall
+Varner,CHEME-5650,fall
 Cleary,CHEME-5770,fall
 
 # Fall: Graduate core
@@ -66,6 +68,8 @@ DeLisa,CHEME-5430,spring
 Bauer,CHEME-5651,spring
 Bauer,CHEME-5650,spring
 Bauer,CHEME-5240,spring
+Celik,CHEME-5650,spring
+Varner,CHEME-5650,spring
 
 # Spring: Graduate core
 Engstrom,CHEME-6420,spring
