@@ -95,12 +95,12 @@ encode strong faculty-course preferences that go beyond the survey data.
 - `faculty_name::String`: faculty last name (must match Faculty.csv)
 - `course_name::String`: course code, e.g. "CHEME-3130"
 - `semester::Symbol`: `:fall` or `:spring`
-- `wv::Float64`: cost value to assign (default -1.0 = strong preference)
+- `wv::Float64`: cost value to assign (default -100.0 = hard constraint)
 """
 function apply_cost_override!(model::MyDirectedBipartiteGraphModel,
     cost_vector::Array{Float64,1}, graph_info::Dict{String,Any},
     faculty_df::DataFrame, fall_courses_df::DataFrame, spring_courses_df::DataFrame,
-    faculty_name::String, course_name::String, semester::Symbol; wv::Float64 = -1.0)
+    faculty_name::String, course_name::String, semester::Symbol; wv::Float64 = -100.0)
 
     idx = findfirst(==(faculty_name), faculty_df[!, :name])
     if isnothing(idx)

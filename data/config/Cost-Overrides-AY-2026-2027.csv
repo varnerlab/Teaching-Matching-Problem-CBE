@@ -3,11 +3,13 @@ faculty,course,semester
 # Fall: Core undergraduate
 Godwin,ENGRI-1120,fall
 DeLisa,ENGRI-1120,fall
-Celik,CHEME-2880,fall
+# Celik,CHEME-2880,fall
+DeLisa,CHEME-2880,fall
 Kowal,ENGRD-2190,fall
 Yu,CHEME-3130,fall
 Goldfarb,CHEME-3240,fall
-Bauer,CHEME-4320,fall
+# Bauer,CHEME-4320,fall
+DeLisa,CHEME-4320,fall
 Li,CHEME-4320,fall
 
 # Fall: Elective undergraduate
@@ -20,7 +22,7 @@ Engstrom,CHEME-4840,fall
 # Fall: M.Eng
 Bauer,CHEME-5020,fall
 Bauer,CHEME-5650,fall
-Celik,CHEME-5650,fall
+Celik,CHEME-5020,fall
 Varner,CHEME-5650,fall
 Cleary,CHEME-5770,fall
 
@@ -37,7 +39,6 @@ Koch,CHEME-6440,fall
 Hanrath,CHEME-6660,fall
 Hanrath,CHEME-6662,fall
 Hanrath,CHEME-6681,fall
-Bauer,CHEME-6660,fall
 You,CHEME-6800,fall
 You,CHEME-6810,fall
 You,CHEME-6830,fall
@@ -59,10 +60,11 @@ Goldfarb,CHEME-4410,spring
 # Spring: Design
 Kowal,CHEME-4620,spring
 Escobedo,CHEME-4620,spring
-Alabi,CHEME-4620,spring
+Coso-Strong,CHEME-4620,spring
 Alabi,CHEME-6430,spring
-Bauer,CHEME-4620,spring
+DeLisa,CHEME-4620,spring
 DeLisa,CHEME-5430,spring
+Alabi,CHEME-4620,spring
 
 # MEng
 Bauer,CHEME-5651,spring
