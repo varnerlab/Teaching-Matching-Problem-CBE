@@ -8,20 +8,21 @@ DeLisa,CHEME-2880,fall
 Kowal,ENGRD-2190,fall
 Yu,CHEME-3130,fall
 Goldfarb,CHEME-3240,fall
-# Bauer,CHEME-4320,fall
-DeLisa,CHEME-4320,fall
-Li,CHEME-4320,fall
+Bauer,CHEME-4320,fall
+Escobedo,CHEME-4320,fall
+Kowal,CHEME-4320,fall
+Alabi,CHEME-4320,fall
+# DeLisa,CHEME-4320,fall
 
 # Fall: Elective undergraduate
 Varner,CHEME-4800,fall
 Varner,CHEME-5660,fall
-Tester,CHEME-4840,fall
-Tester,CHEME-4880,fall
 Engstrom,CHEME-4840,fall
 
 # Fall: M.Eng
 Bauer,CHEME-5020,fall
 Bauer,CHEME-5650,fall
+Bauer,CHEME-5651,fall
 Celik,CHEME-5020,fall
 Varner,CHEME-5650,fall
 Cleary,CHEME-5770,fall
@@ -55,7 +56,8 @@ Cardenas,CHEME-3900,spring
 Bauer,CHEME-4620,spring
 
 # Spring: Elective undergraduate
-Goldfarb,CHEME-4410,spring
+# Goldfarb,CHEME-4410,spring
+Goldfarb,CHEME-4xxx,spring
 
 # Spring: Design
 Kowal,CHEME-4620,spring
