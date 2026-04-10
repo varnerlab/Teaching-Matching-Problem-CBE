@@ -232,6 +232,14 @@ function build_assignments_dataframe(graph_info::Dict{String,Any},
             Float64(spring_courses_df[spring_courses_df.course .== c, :credits][1]) / spring_course_count[c]
             for c in sc; init=0.0)
 
+        # Undiluted credit hours: full course credits regardless of team size
+        fall_credits_full = sum(
+            Float64(fall_courses_df[fall_courses_df.course .== c, :credits][1])
+            for c in fc; init=0.0)
+        spring_credits_full = sum(
+            Float64(spring_courses_df[spring_courses_df.course .== c, :credits][1])
+            for c in sc; init=0.0)
+
         push!(rows, (
             Faculty        = name,
             Fall_Course    = join(fc, "; "),
@@ -244,6 +252,7 @@ function build_assignments_dataframe(graph_info::Dict{String,Any},
             Fall_Credits   = fall_credits,
             Spring_Credits = spring_credits,
             Total_Credits  = fall_credits + spring_credits,
+            Total_Credits_Undiluted = fall_credits_full + spring_credits_full,
         ))
     end
 
@@ -350,10 +359,10 @@ function main()
     println("  Faculty Teaching Assignments — AY 2026-2027")
     println("="^90)
     pretty_table(
-        output_df[:, [:Faculty, :Fall_Course, :Spring_Course, :Fall_Load, :Spring_Load, :Total_Load, :Fall_Credits, :Spring_Credits, :Total_Credits]];
+        output_df[:, [:Faculty, :Fall_Course, :Spring_Course, :Fall_Load, :Spring_Load, :Total_Load, :Fall_Credits, :Spring_Credits, :Total_Credits, :Total_Credits_Undiluted]];
         backend = :text,
         table_format = TextTableFormat(borders = text_table_borders__compact),
-        alignment = [:l, :l, :l, :c, :c, :c, :c, :c, :c],
+        alignment = [:l, :l, :l, :c, :c, :c, :c, :c, :c, :c],
         fit_table_in_display_horizontally = false,
         fit_table_in_display_vertically = false,
     )
