@@ -12,10 +12,8 @@ Bauer,CHEME-4320,fall
 Escobedo,CHEME-4320,fall
 Kowal,CHEME-4320,fall
 Alabi,CHEME-4320,fall
-# DeLisa,CHEME-4320,fall
 
 # Fall: Elective undergraduate
-Varner,CHEME-4800,fall
 Varner,CHEME-5660,fall
 Engstrom,CHEME-4840,fall
 
@@ -25,6 +23,7 @@ Bauer,CHEME-5650,fall
 Bauer,CHEME-5651,fall
 Celik,CHEME-5020,fall
 Varner,CHEME-5650,fall
+Varner,CHEME-5020,fall
 Cleary,CHEME-5770,fall
 
 # Fall: Graduate core
@@ -44,6 +43,12 @@ You,CHEME-6800,fall
 You,CHEME-6810,fall
 You,CHEME-6830,fall
 You,CHEME-6840,fall
+Celik,CHEME-5990,fall
+Hanrath,CHEME-5870,fall
+
+# Fall course development:
+Li,CHEME-5999,fall
+Yang,CHEME-5999,fall
 
 # ======== SPRING 2027 ======== #
 # Spring: Core undergraduate
@@ -71,9 +76,9 @@ Alabi,CHEME-4620,spring
 # MEng
 Bauer,CHEME-5651,spring
 Bauer,CHEME-5650,spring
-Bauer,CHEME-5240,spring
 Celik,CHEME-5650,spring
 Varner,CHEME-5650,spring
+Varner,CHEME-5820,spring
 
 # Spring: Graduate core
 Engstrom,CHEME-6420,spring
@@ -84,3 +89,4 @@ Escobedo,CHEME-5540,spring
 Godwin,CHEME-6940,spring
 You,CHEME-6810,spring
 You,CHEME-6888,spring
+Celik,CHEME-5990,spring

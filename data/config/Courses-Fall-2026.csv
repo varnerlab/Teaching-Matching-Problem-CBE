@@ -3,11 +3,11 @@ CHEME-2880,4,true,1,Biomolecular Engineering: Fundamentals and Applications
 CHEME-3130,4,true,1,Chemical Engineering Thermodynamics
 CHEME-3240,4,true,1,Heat and Mass Transfer
 CHEME-4320,4,true,4,Chemical Engineering Laboratory
-CHEME-4800,4,false,1,Principles of Computational Thinking for Engineers
+CHEME-4800,4,false,0,Principles of Computational Thinking for Engineers
 CHEME-4840,3,false,1,Microchemical and Microfluidic Systems
 CHEME-4880,3,false,1,"Global Food, Energy, and Water Nexus"
 CHEME-4998,1,false,1,International Research Internship
-CHEME-5020,3,false,2,Immersive Professional Development for Chemical Engineering M. Eng.
+CHEME-5020,3,false,3,Immersive Professional Development for Chemical Engineering M. Eng.
 CHEME-5310,3,false,1,Principles of Electrochemical Engineering
 CHEME-5320,3,false,1,"Glass: Structure, Properties and Modern Applications"
 CHEME-5650,1,false,1,Design Project
@@ -18,13 +18,13 @@ CHEME-5770,3,false,1,Principles in Process and Lean Engineering
 CHEME-5800,4,false,1,Principles of Computational Thinking for Engineers
 CHEME-5870,1,false,1,Energy Seminar I
 CHEME-5990,1,false,1,Medical and Industrial Biotechnology Seminar
-CHEME-5999,1,false,1,Special Projects in Chemical Engineering
+CHEME-5999,1,false,2,Special Projects in Chemical Engineering
 CHEME-6110,3,true,1,Mathematical Methods of Chemical Engineering Analysis
 CHEME-6130,3,true,1,Advanced Chemical Engineering Thermodynamics
 CHEME-6230,3,true,1,Transport Phenomena for Chemical and Biomolecular Engineering
 CHEME-6310,3,false,1,Engineering Principles for Drug Delivery
 CHEME-6440,3,false,1,Aerosols and Colloids
-CHEME-6660,2,false,1,Analysis of Sustainable Energy Systems
+CHEME-6660,3,false,2,Analysis of Sustainable Energy Systems
 CHEME-6662,1,false,1,Solar Energy Module
 CHEME-6681,1,false,1,Energy Analysis Project
 CHEME-6780,3,false,1,"Global Food, Energy, and Water Nexus"
