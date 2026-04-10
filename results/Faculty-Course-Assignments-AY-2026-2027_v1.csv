@@ -1,0 +1,32 @@
+Faculty,Fall_Course,Fall_Title,Spring_Course,Spring_Title,Fall_Load,Spring_Load,Total_Load,Fall_Credits,Spring_Credits,Total_Credits
+Abbott,,,,,0,0,0,0,0,0
+Alabi,,,CHEME-4620; CHEME-6430,Chemical Engineering Design; Kinetics and Dynamics in Molecular and Cellular Systems,0,2,2,0,4,4
+Archer,,,,,0,0,0,0,0,0
+Bauer,CHEME-4320; CHEME-5020; CHEME-5650,Chemical Engineering Laboratory; Immersive Professional Development for Chemical Engineering M. Eng.; Design Project,,,3,0,3,3.5,0,3.5
+Cardenas,,,CHEME-3900,Chemical Kinetics and Reactor Design,0,1,1,0,4,4
+Celik,CHEME-4320; CHEME-5020,Chemical Engineering Laboratory; Immersive Professional Development for Chemical Engineering M. Eng.,CHEME-5240; CHEME-5460; CHEME-5650,Chemical Process Safety Management; Introduction to Synthetic Biology; Design Project,2,3,5,2.5,3.5,6
+Cleary,CHEME-5770,Principles in Process and Lean Engineering,,,1,0,1,3,0,3
+Coso-Strong,TBD (systems course?),Principles of Computational Thinking for Engineers,CHEME-3720; CHEME-4620,Introduction to Process Dynamics and Control; Chemical Engineering Design,1,2,3,4,3,7
+Daniel,,,CHEME-3010,Career Perspectives,0,1,1,0,1,1
+DeLisa,CHEME-2880; CHEME-4320; ENGRI-1120,Biomolecular Engineering: Fundamentals and Applications; Chemical Engineering Laboratory; Feast! Chemical and Biomolecular Processes and Products through Food,CHEME-4620; CHEME-5430,Chemical Engineering Design; Bioprocess Engineering,3,2,5,6.5,4,10.5
+Duncan,,,,,0,0,0,0,0,0
+Engstrom,CHEME-4840,Microchemical and Microfluidic Systems,CHEME-6420,Chemical Kinetics and Transport,1,1,2,3,3,6
+Escobedo,CHEME-6110,Mathematical Methods of Chemical Engineering Analysis,CHEME-5540,Principles of Molecular Simulation,1,1,2,3,3,6
+Godwin,ENGRI-1120,Feast! Chemical and Biomolecular Processes and Products through Food,CHEME-6940,Discipline-Based Education Research Methods,1,1,2,1.5,3,4.5
+Goldfarb,CHEME-3240,Heat and Mass Transfer,CHEME-4410,Air Pollution Control,1,1,2,4,3,7
+Hanrath,CHEME-6660; CHEME-6662; CHEME-6681,Analysis of Sustainable Energy Systems; Solar Energy Module; Energy Analysis Project,,,3,0,3,4,0,4
+Harimoto,,,,,0,0,0,0,0,0
+Hormozi,,,CHEME-3230,Fluid Mechanics,0,1,1,0,4,4
+Joo,,,,,0,0,0,0,0,0
+Kalra,CHEME-5310,Principles of Electrochemical Engineering,,,1,0,1,3,0,3
+Koch,CHEME-6440,Aerosols and Colloids,CHEME-6240,Advanced Fluid Mechanics and Heat Transfer,1,1,2,3,3,6
+Kowal,CHEME-5651; CHEME-6920; ENGRD-2190,M. Eng. Design Project Studio; Principles and Practices of Graduate Research; Chemical Process Design and Analysis,CHEME-4020; CHEME-4620,Molecular Principles of Biomedical Engineering; Chemical Engineering Design,3,2,5,6,4,10
+Li,TBD (5999 development of new bio course),Chemical Engineering Laboratory,CHEME-5440,Kinetics and Dynamics in Molecular and Cellular Systems,1,1,2,1,3,4
+Putnam,CHEME-6310,Engineering Principles for Drug Delivery,,,1,0,1,3,0,3
+Stroock,CHEME-6230,Transport Phenomena for Chemical and Biomolecular Engineering,CHEME-2200,Physical Chemistry II for Engineers,1,1,2,3,4,7
+Tester,,,,,0,0,0,0,0,0
+Varner,CHEME-4800; CHEME-5660,"Principles of Computational Thinking for Engineers; Financial Data, Markets, and Mayhem for Scientists and Engineers",CHEME-5650; CHEME-5820,Design Project; Machine Learning and Artificial Intelligence Methods for Engineers,2,2,4,7,4.5,11.5
+Yang,TBD (5999 development of new semiconductor course),Medical and Industrial Biotechnology Seminar,CHEME-6400,Polymeric Materials,1,1,2,1,3,4
+You,CHEME-6800; CHEME-6810; CHEME-6830; CHEME-6840,Computational Optimization; AI for Sustainability; AI for Energy Systems; AI for Digital Agriculture,CHEME-6810; CHEME-6888,AI for Sustainability; Deep Learning,4,2,6,9,7,16
+Yu,CHEME-3130,Chemical Engineering Thermodynamics,,,1,0,1,4,0,4
+Yue,CHEME-6130,Advanced Chemical Engineering Thermodynamics,CHEME-3320,Analysis of Separation Processes,1,1,2,3,4,7
