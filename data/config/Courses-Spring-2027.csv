@@ -7,7 +7,7 @@ CHEME-3720,2,true,1,Introduction to Process Dynamics and Control
 CHEME-3900,4,true,1,Chemical Kinetics and Reactor Design
 CHEME-4020,3,false,1,Molecular Principles of Biomedical Engineering
 CHEME-4410,3,false,1,Air Pollution Control
-CHEME-4620,4,true,7,Chemical Engineering Design
+CHEME-4620,4,true,6,Chemical Engineering Design
 CHEME-4900,1,false,1,Undergraduate Projects in Chemical Engineering
 CHEME-4xxx,3,false,1,The AIChemeE of an Empire
 CHEME-4998,6,false,1,International Research Internship
@@ -35,4 +35,5 @@ CHEME-6681,1,false,1,Energy Analysis Project
 CHEME-6682,1,false,1,Energy Economics for Engineers
 CHEME-6810,3,false,1,AI for Sustainability
 CHEME-6888,4,false,1,Deep Learning
-CHEME-6940,3,false,1,Discipline-Based Education Research Methods
+CHEME-7700,1,false,1,Chemical Engineering Graduate Research Seminar
+CHEME-7900,1,false,1,Chemical Engineering Seminar

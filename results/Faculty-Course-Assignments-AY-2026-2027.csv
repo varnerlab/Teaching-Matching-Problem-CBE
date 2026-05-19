@@ -1,0 +1,34 @@
+Faculty,Fall_Course,Fall_Title,Spring_Course,Spring_Title,Fall_Load,Spring_Load,Total_Load,Fall_Credits,Spring_Credits,Total_Credits,Total_Credits_Undiluted
+Abbott,,,,,0,0,0,0.0,0.0,0.0,0.0
+Alabi,CHEME-4320,Chemical Engineering Capstone Design I,CHEME-4620; CHEME-6430,Chemical Engineering Design; Kinetics and Dynamics in Molecular and Cellular Systems,1,2,3,0.8,3.6666666666666665,4.466666666666667,11.0
+Archer,,,,,0,0,0,0.0,0.0,0.0,0.0
+Bauer,CHEME-4320; CHEME-5020; CHEME-5650; CHEME-5651; CHEME-6660,Chemical Engineering Capstone Design I; Immersive Professional Development for Chemical Engineering M. Eng.; Design Project; M. Eng. Design Project Studio; Sustainable Energy Choices – Technologies and Economics,CHEME-4620; CHEME-5650; CHEME-5651,Chemical Engineering Design; Design Project; M. Eng. Design Project Studio,5,3,8,4.8,2.0,6.8,18.0
+Cardenas,,,CHEME-3900,Chemical Kinetics and Reactor Design,0,1,1,0.0,4.0,4.0,4.0
+Celik,CHEME-4320; CHEME-5020; CHEME-5990,Chemical Engineering Capstone Design I; Immersive Professional Development for Chemical Engineering M. Eng.; Medical and Industrial Biotechnology Seminar,CHEME-5460; CHEME-5650; CHEME-5990,Introduction to Synthetic Biology; Design Project; Medical and Industrial Biotechnology Seminar,3,3,6,2.8,2.333333333333333,5.133333333333333,11.0
+Cleary,CHEME-5770,Principles in Process and Lean Engineering,CHEME-5240,Chemical Process Safety Management,1,1,2,3.0,2.0,5.0,5.0
+Coso-Strong,CHEME-6950,Design for Learning: Bridging STEM Education Research and Practice,CHEME-3720; CHEME-4620,Introduction to Process Dynamics and Control; Chemical Engineering Design,1,2,3,3.0,2.6666666666666665,5.666666666666666,9.0
+Daniel,,,CHEME-3010,Career Perspectives,0,1,1,0.0,1.0,1.0,1.0
+DeLisa,CHEME-2880; ENGRI-1120,Biomolecular Engineering: Fundamentals and Applications; Feast! Chemical and Biomolecular Processes and Products through Food,CHEME-4620; CHEME-5430,Chemical Engineering Design; Bioprocess Engineering,2,2,4,5.5,3.6666666666666665,9.166666666666666,14.0
+Duncan,,,,,0,0,0,0.0,0.0,0.0,0.0
+Engstrom,CHEME-4840,Microchemical and Microfluidic Systems,CHEME-6420,Chemical Kinetics and Transport,1,1,2,3.0,3.0,6.0,6.0
+Escobedo,CHEME-4320; CHEME-6110,Chemical Engineering Capstone Design I; Mathematical Methods of Chemical Engineering Analysis,CHEME-4620; CHEME-5540,Chemical Engineering Design; Principles of Molecular Simulation,2,2,4,3.8,3.6666666666666665,7.466666666666667,14.0
+Godwin,ENGRI-1120,Feast! Chemical and Biomolecular Processes and Products through Food,,,1,0,1,1.5,0.0,1.5,3.0
+Goldfarb,CHEME-3240,Heat and Mass Transfer,CHEME-4xxx,The AIChemeE of an Empire,1,1,2,4.0,3.0,7.0,7.0
+Hanrath,CHEME-5870; CHEME-6660; CHEME-6662; CHEME-6671; CHEME-6681,Energy Seminar I; Sustainable Energy Choices – Technologies and Economics; Solar Energy Module; Nuclear Energy Module; Energy Analysis Project,,,5,0,5,4.0,0.0,4.0,7.0
+Harimoto,,,,,0,0,0,0.0,0.0,0.0,0.0
+Hormozi,,,CHEME-3230,Fluid Mechanics,0,1,1,0.0,4.0,4.0,4.0
+Joo,,,,,0,0,0,0.0,0.0,0.0,0.0
+Kalra,CHEME-5310,Principles of Electrochemical Engineering,,,1,0,1,3.0,0.0,3.0,3.0
+Koch,CHEME-6440,Colloids and Aerosols,CHEME-6240,Advanced Fluid Mechanics and Heat Transfer,1,1,2,3.0,3.0,6.0,6.0
+Kowal,CHEME-4320; CHEME-6920; CHEME-7700; ENGRD-2190,Chemical Engineering Capstone Design I; Principles and Practices of Graduate Research; Chemical Engineering Graduate Research Seminar; Chemical Process Design and Analysis,CHEME-4620; CHEME-7700,Chemical Engineering Design; Chemical Engineering Graduate Research Seminar,4,2,6,6.8,1.6666666666666665,8.466666666666667,15.0
+Li,CHEME-5999,Special Projects in Chemical Engineering,,,1,0,1,0.5,0.0,0.5,1.0
+Murphy,CHEME-6661,Bioenergy and Biofuels Module,,,1,0,1,0.5,0.0,0.5,1.0
+Putnam,CHEME-6310,Engineering Principles for Drug Delivery,,,1,0,1,3.0,0.0,3.0,3.0
+Stroock,CHEME-6230,Transport Phenomena for Chemical and Biomolecular Engineering,CHEME-2200,Physical Chemistry II for Engineers,1,1,2,3.0,4.0,7.0,7.0
+Tester,CHEME-4880; CHEME-6660; CHEME-6661; CHEME-6670; CHEME-6671; CHEME-6681,"Global Food, Energy, and Water Nexus; Sustainable Energy Choices – Technologies and Economics; Bioenergy and Biofuels Module; Fossil Fuels Module; Nuclear Energy Module; Energy Analysis Project",,,6,0,6,6.0,0.0,6.0,10.0
+Varner,CHEME-5020; CHEME-5660; CHEME-5800,"Immersive Professional Development for Chemical Engineering M. Eng.; Financial Data, Markets, and Mayhem for Scientists and Engineers; Principles of Computational Thinking for Engineers",CHEME-5650; CHEME-5820,Design Project; Machine Learning and Artificial Intelligence Methods for Engineers,3,2,5,8.0,4.333333333333333,12.333333333333332,15.0
+Weill,CHEME-6670,Fossil Fuels Module,,,1,0,1,0.5,0.0,0.5,1.0
+Yang,CHEME-5999,Special Projects in Chemical Engineering,CHEME-6400,Polymeric Materials,1,1,2,0.5,3.0,3.5,4.0
+You,CHEME-6800; CHEME-6810; CHEME-6830; CHEME-6840,Computational Optimization; AI for Sustainability; AI for Energy Systems; AI for Digital Agriculture,CHEME-6810; CHEME-6888,AI for Sustainability; Deep Learning,4,2,6,9.0,7.0,16.0,16.0
+Yu,CHEME-3130,Chemical Engineering Thermodynamics,,,1,0,1,4.0,0.0,4.0,4.0
+Yue,CHEME-6130,Advanced Chemical Engineering Thermodynamics,CHEME-3320,Analysis of Separation Processes,1,1,2,3.0,4.0,7.0,7.0
