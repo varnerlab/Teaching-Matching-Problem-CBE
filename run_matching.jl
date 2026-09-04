@@ -23,6 +23,18 @@ Options:
   -h, --help         Show this help.
 
 Without --no-save or --save-as, the validated result replaces results/latest.
+
+Examples:
+  julia --project=. run_matching.jl --no-save
+  julia --project=. run_matching.jl --save-as baseline
+  julia --project=. run_matching.jl --compare baseline --no-save
+  julia --project=. run_matching.jl --compare baseline --save-as candidate-1
+  julia --project=. run_matching.jl --save-as baseline --replace
+
+Notes:
+  --no-save cannot be combined with --save-as.
+  --replace is valid only with --save-as.
+  Named scenarios are never replaced unless --replace is supplied.
 """)
 end
 
