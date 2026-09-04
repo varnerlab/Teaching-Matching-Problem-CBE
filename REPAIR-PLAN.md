@@ -77,7 +77,7 @@ result = solve_matching(
 
 Make `run_matching.jl` a thin command-line entry point. Update the notebook to call the same function. Remove duplicated LP construction and manual notebook overrides so the two interfaces cannot silently solve different problems.
 
-The returned result should expose assignments, flow, objective value, validation results, and effective source data for notebook exploration and exports.
+The returned result should expose assignments, flow, matching cost in the original minimization convention, validation results, and effective source data for notebook exploration and exports.
 
 ### 5. Add pre-solve validation, post-solve verification, and tests
 
@@ -163,14 +163,14 @@ Support scenario comparison where practical:
 julia --project=. run_matching.jl --compare celik-5650
 ```
 
-The comparison should summarize changed faculty assignments, course staffing, objective values, and validation differences.
+The comparison should summarize changed faculty assignments, course staffing, matching costs, and validation differences.
 
 Each saved result set should record:
 
 - Run timestamp and optional scenario label.
 - Git commit when available.
 - Hashes of all effective input files.
-- Solver status and objective value.
+- Solver status, matching cost (lower is better), and the internal maximization objective for debugging.
 - Faculty and course counts.
 - Fall and Spring assignment totals.
 - Validation outcome.

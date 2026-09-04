@@ -21,6 +21,9 @@ for Fall 2026 and Spring 2027 with a validated minimum-cost flow model.
 - Courses use explicit `min_faculty` and `max_faculty` bounds.
 - `fixed` assignments are enforced with lower and upper flow bounds of one.
 - `preferred` assignments are negotiable and represented in the objective.
+- Matching cost is reported in the original minimization convention (lower is
+  better). `solver_objective` is its negation because the package solver
+  maximizes internally.
 - Preference values are 0–3; missing means unknown, not 3.
 - Unknown edges are unavailable for automatic matching but may be enabled by
   an explicit fixed or preferred decision.

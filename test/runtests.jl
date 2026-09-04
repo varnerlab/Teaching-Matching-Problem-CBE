@@ -47,11 +47,13 @@ end
         paths = write_test_inputs(directory,
             faculty = "name,load_fall,load_spring\nAlice,1,0\nBob,1,0\n",
             fall_courses = "course,credits,min_faculty,max_faculty,title\nX,3,1,1,X\nY,3,1,1,Y\n",
-            fall_preferences = "lastname,X,Y\nAlice,0,2\nBob,2,0\n",
+            fall_preferences = "lastname,X,Y\nAlice,1,2\nBob,2,1\n",
         )
         result = solve_matching(paths = paths)
         @test result.fall_matching["Alice"] == ["X"]
         @test result.fall_matching["Bob"] == ["Y"]
+        @test result.matching_cost == 2.0
+        @test result.solution["objective_value"] == -2.0
     end
 end
 
@@ -67,6 +69,8 @@ end
         result = solve_matching(paths = paths)
         @test result.fall_matching["Alice"] == ["Y"]
         @test _selected_assignment_counts(result) == (0, 1)
+        @test result.matching_cost == -100.0
+        @test result.solution["objective_value"] == 100.0
     end
 end
 
@@ -113,6 +117,7 @@ end
             results_root = results_directory)
         @test nrow(comparison.assignment_changes) == 0
         @test nrow(comparison.staffing_changes) == 0
+        @test comparison.saved_matching_cost == comparison.current_matching_cost
         @test save_matching_result(result; results_root = results_directory,
             save_as = "baseline", replace = true) == target
     end

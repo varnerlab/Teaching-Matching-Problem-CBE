@@ -84,7 +84,7 @@ function print_result(result)
     fixed, preferred = _selected_assignment_counts(result)
     println("\nValidated: $fall_assignments Fall + $spring_assignments Spring = $(fall_assignments + spring_assignments) assignments")
     println("Selected decisions: $fixed fixed, $preferred preferred")
-    println("Solver status: $(result.solution["status"]) | objective: $(result.solution["objective_value"])")
+    println("Solver status: $(result.solution["status"]) | matching cost: $(result.matching_cost) (lower is better)")
 
     if !isempty(result.warnings)
         println("\nConfiguration warnings:")
@@ -97,7 +97,7 @@ end
 
 function print_comparison(comparison, scenario::String)
     println("\nComparison with saved scenario '$scenario'")
-    println("Objective: $(comparison.saved_objective) -> $(comparison.current_objective)")
+    println("Matching cost (lower is better): $(comparison.saved_matching_cost) -> $(comparison.current_matching_cost)")
 
     if nrow(comparison.assignment_changes) == 0
         println("No faculty assignment changes.")

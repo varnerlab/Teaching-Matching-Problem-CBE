@@ -471,6 +471,12 @@ function solve_matching(; paths = default_matching_paths(), preferred_cost::Floa
                 "The validated configuration still has no feasible matching. Review how fixed assignments and eligible preference edges interact. Solver detail: $(sprint(showerror, error))",
             ]))
         end
+        matching_cost = sum(cost_vector .* solution["argmax"])
+        solver_objective = solution["objective_value"]
+        isapprox(matching_cost, -solver_objective; atol = 1e-8) ||
+            throw(MatchingValidationError([
+                "Internal objective-sign check failed: matching cost $matching_cost does not equal the negative solver objective $(-solver_objective).",
+            ]))
         flow = extract_flow(model, solution)
         fall_matching = extract_matching(flow, graph_info["fall_gateway_nodes"],
             graph_info["fall_course_nodes"], inputs.faculty, inputs.fall_courses)
@@ -499,6 +505,7 @@ function solve_matching(; paths = default_matching_paths(), preferred_cost::Floa
             warnings = warnings,
             verification = verification,
             preferred_cost = preferred_cost,
+            matching_cost = matching_cost,
         )
     end
 end
@@ -613,7 +620,9 @@ function _result_metadata(result; scenario = "latest")
         "git_commit" => _git_commit(_ROOT),
         "git_dirty" => _git_dirty(_ROOT),
         "solver_status" => string(result.solution["status"]),
-        "objective_value" => result.solution["objective_value"],
+        "matching_cost" => result.matching_cost,
+        "objective_sense" => "minimize",
+        "solver_objective" => result.solution["objective_value"],
         "preferred_cost" => result.preferred_cost,
         "faculty_count" => nrow(result.inputs.faculty),
         "fall_course_count" => nrow(result.inputs.fall_courses),
@@ -637,6 +646,7 @@ function _write_validation_report(path::String, result, metadata)
         println(io, "- Scenario: `$(metadata["scenario"])`")
         println(io, "- Generated: $(metadata["created_at"])")
         println(io, "- Solver status: `$(metadata["solver_status"])`")
+        println(io, "- Matching cost: $(metadata["matching_cost"]) (lower is better)")
         println(io, "- Assignments: $(metadata["fall_assignments"]) Fall + $(metadata["spring_assignments"]) Spring = $(metadata["total_assignments"]) total")
         println(io, "- Fixed assignments selected: $(metadata["fixed_assignments_selected"])\n")
         println(io, "## Verified invariants\n")
@@ -771,11 +781,19 @@ function compare_matching_result(result, scenario::String;
         end
     end
 
+    saved_matching_cost = if haskey(old_metadata, "matching_cost")
+        old_metadata["matching_cost"]
+    else
+        # Compatibility with scenarios saved before matching costs were reported
+        # in the original minimization convention.
+        -old_metadata["objective_value"]
+    end
+
     return (
         assignment_changes = DataFrame(assignment_changes),
         staffing_changes = DataFrame(staffing_changes),
-        saved_objective = old_metadata["objective_value"],
-        current_objective = result.solution["objective_value"],
+        saved_matching_cost = saved_matching_cost,
+        current_matching_cost = result.matching_cost,
     )
 end
 

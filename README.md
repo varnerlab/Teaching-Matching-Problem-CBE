@@ -80,6 +80,12 @@ Celik,CHEME-5650,fall,preferred
 - `fixed` is a mathematical requirement and must appear in the result.
 - `preferred` is a strong but negotiable objective preference.
 
+The reported matching cost uses the original minimization convention: lower is
+better. Ordinary preference costs range from `0` (best) to `3` (worst), while a
+preferred administrative decision has a default cost of `-100`. The underlying
+solver maximizes the negated cost internally, but that implementation detail is
+reported only as `solver_objective` in metadata.
+
 The validator rejects conflicts such as more fixed assignments than a
 faculty member's exact obligation.
 
@@ -109,8 +115,8 @@ faculty-course pair.
 - `run-metadata.json`
 
 Named scenarios under `results/scenarios/` also contain copies of all effective
-input files. Metadata records input hashes, Git commit, solver status, counts,
-and validation status.
+input files. Metadata records input hashes, Git commit, solver status, matching
+cost, the internal solver objective, counts, and validation status.
 
 Result files are replaced only after the solve passes post-solve verification.
 
