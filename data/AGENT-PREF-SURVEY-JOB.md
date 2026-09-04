@@ -24,7 +24,7 @@ Output
   - One column per course, named `PREFIX-NUMBER` (example: `ENGRI-1120`)
 - Rows:
   - One row per faculty
-  - All missing preference cells filled with default value `3`
+  - Missing survey answers remain blank
 
 How to Run
 ----------
@@ -77,14 +77,9 @@ keep the row with the most non-empty course values and drop the other(s).
 
 Defaults and Missing Data
 -------------------------
-1) Fill missing preference values for all faculty with `3`.
-2) Ensure these faculty exist even if they did not respond:
-   - DeLisa
-   - Abbott
-   - Joo
-   - Putnam
-   - Yang (already exists in the current file; do NOT overwrite if present)
-   Any missing from the file should be added with `3` for all courses.
+Keep missing values blank. A blank means "unknown/no data" and is not the same
+as an explicit value of `3` ("needs significant support"). Do not add synthetic
+all-3 rows for faculty who did not respond.
 
 Suggested Implementation (Python / pandas)
 -----------------------------------------
@@ -96,16 +91,14 @@ Suggested Implementation (Python / pandas)
    - course columns mapped via the preference coding
 5) Keep only non-empty last names.
 6) Resolve `Coso-Strong` duplicate by most non-null course values.
-7) Fill missing values with `3`.
-8) Add default rows for missing faculty.
-9) Rename course columns to `PREFIX-NUMBER` (replace space with `-`).
-10) Save to `data/faculty_course_preferences.csv`.
+7) Preserve missing values as blank cells.
+8) Rename course columns to `PREFIX-NUMBER` (replace space with `-`).
+9) Save to `data/faculty_course_preferences.csv`.
 
 Validation Checklist
 --------------------
 - CSV exists at `data/faculty_course_preferences.csv`
 - Column headers use `PREFIX-NUMBER`
-- All preference values are integers 0–3
-- No missing values remain
-- Default faculty rows exist for DeLisa, Abbott, Joo, Putnam
-- Yang’s existing row is preserved if present
+- Every nonblank preference value is an integer 0–3
+- Missing answers remain blank
+- No synthetic nonrespondent faculty rows are added

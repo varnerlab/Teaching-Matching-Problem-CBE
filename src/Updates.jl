@@ -117,7 +117,7 @@ function extract_matching(flow::Dict{Tuple{Int,Int}, Float64},
         for j in eachindex(course_nodes)
             cn = course_nodes[j]
             fv = get(flow, (gw, cn), 0.0)
-            if fv > 0.0
+            if fv > 0.5
                 push!(assigned, String(courses_df[j, :course]))
             end
         end

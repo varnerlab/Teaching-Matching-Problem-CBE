@@ -110,26 +110,12 @@ def main() -> None:
     # Drop duplicate Coso-Strong rows, keep the one with more values.
     out = keep_best_duplicate(out, "Coso-Strong", course_cols)
 
-    # Fill missing values with default 3 for all faculty.
-    out[course_cols] = out[course_cols].fillna(3)
-
-    # Add default faculty who did not respond (do not overwrite existing rows).
-    default_faculty = ["DeLisa", "Abbott", "Joo", "Putnam", "Yang"]
-    existing = set(out["lastname"].astype(str))
-    rows = []
-    for name in default_faculty:
-        if name not in existing:
-            row = {"lastname": name}
-            row.update({c: 3 for c in course_cols})
-            rows.append(row)
-    if rows:
-        out = pd.concat([out, pd.DataFrame(rows)], ignore_index=True)
-
     out["lastname"] = out["lastname"].astype(str).str.replace(" ", "-", regex=False)
 
-    # Ensure integer output.
+    # Keep missing survey answers blank so they remain distinct from an explicit
+    # score of 3 ("needs significant support").
     for col in course_cols:
-        out[col] = out[col].astype(int)
+        out[col] = out[col].astype("Int64")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(args.output, index=False)

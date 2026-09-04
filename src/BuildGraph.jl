@@ -1,171 +1,117 @@
 """
-    generate_edgelist(; faculty_csv, fall_courses_csv, spring_courses_csv,
-        fall_preferences_csv, spring_preferences_csv, output_edgelist) -> Dict
+    generate_edgelist(; faculty_df, fall_courses_df, spring_courses_df,
+        fall_preferences_df, spring_preferences_df, assignments_df,
+        output_edgelist, preferred_cost=-100.0) -> Dict
 
-Programmatically generate the directed bipartite graph edgelist for the
-two-semester faculty-course matching problem.
+Generate the two-semester teaching-assignment flow network.
 
-Graph architecture:
-    BOS → Faculty_i → FallGW_i  → FallCourses  → FallCompletions  → EOS
-                    → SpringGW_i → SpringCourses → SpringCompletions → EOS
-
-Returns a metadata dictionary with all computed node indices and graph info.
+Faculty `load_fall` and `load_spring` values are exact obligations because the
+total source flow equals their sum. Course `min_faculty` and `max_faculty`
+values become lower and upper flow bounds. Missing preferences do not create
+eligible automatic matches. A `fixed` assignment has flow bounds `[1, 1]`; a
+`preferred` assignment remains optional but receives `preferred_cost`.
 """
 function generate_edgelist(;
-    faculty_csv::String,
-    fall_courses_csv::String,
-    spring_courses_csv::String,
-    fall_preferences_csv::String,
-    spring_preferences_csv::String,
+    faculty_df::DataFrame,
+    fall_courses_df::DataFrame,
+    spring_courses_df::DataFrame,
+    fall_preferences_df::DataFrame,
+    spring_preferences_df::DataFrame,
+    assignments_df::DataFrame,
     output_edgelist::String,
-    default_preference_cost::Float64 = 3.0
+    preferred_cost::Float64 = -100.0,
 )
-
-    # --- Read input data ---
-    faculty_df = CSV.read(faculty_csv, DataFrame)
-    fall_courses_df = CSV.read(fall_courses_csv, DataFrame)
-    spring_courses_df = CSV.read(spring_courses_csv, DataFrame)
-    fall_pref_df = CSV.read(fall_preferences_csv, DataFrame)
-    spring_pref_df = CSV.read(spring_preferences_csv, DataFrame)
-
     N_f = nrow(faculty_df)
     N_cF = nrow(fall_courses_df)
     N_cS = nrow(spring_courses_df)
 
-    # --- Compute node indices ---
-    # Layout: BOS | Faculty | FallGW | SpringGW | FallCourses | SpringCourses | FallCompletions | SpringCompletions | EOS
     bos = 1
+    faculty_nodes = collect(2:(N_f + 1))
+    fall_gw_nodes = collect((faculty_nodes[end] + 1):(faculty_nodes[end] + N_f))
+    spring_gw_nodes = collect((fall_gw_nodes[end] + 1):(fall_gw_nodes[end] + N_f))
+    fall_course_nodes = collect((spring_gw_nodes[end] + 1):(spring_gw_nodes[end] + N_cF))
+    spring_course_nodes = collect((fall_course_nodes[end] + 1):(fall_course_nodes[end] + N_cS))
+    fall_comp_nodes = collect((spring_course_nodes[end] + 1):(spring_course_nodes[end] + N_cF))
+    spring_comp_nodes = collect((fall_comp_nodes[end] + 1):(fall_comp_nodes[end] + N_cS))
+    eos = spring_comp_nodes[end] + 1
 
-    faculty_start = 2
-    faculty_nodes = collect(faculty_start : faculty_start + N_f - 1)
+    fall_pref = _build_pref_lookup(fall_preferences_df)
+    spring_pref = _build_pref_lookup(spring_preferences_df)
+    assignment_kinds = _build_assignment_lookup(assignments_df)
 
-    fall_gw_start = faculty_start + N_f
-    fall_gw_nodes = collect(fall_gw_start : fall_gw_start + N_f - 1)
+    edges = String[
+        "# Two-semester faculty-course matching edgelist (auto-generated)",
+        "# Format: source,target,cost,lb,ub",
+        "# Missing preference edges have ub=0; fixed assignments have lb=ub=1",
+        "#",
+        "# BOS -> Faculty (exact yearly obligations through total-flow balance)",
+    ]
 
-    spring_gw_start = fall_gw_start + N_f
-    spring_gw_nodes = collect(spring_gw_start : spring_gw_start + N_f - 1)
-
-    fall_course_start = spring_gw_start + N_f
-    fall_course_nodes = collect(fall_course_start : fall_course_start + N_cF - 1)
-
-    spring_course_start = fall_course_start + N_cF
-    spring_course_nodes = collect(spring_course_start : spring_course_start + N_cS - 1)
-
-    fall_comp_start = spring_course_start + N_cS
-    fall_comp_nodes = collect(fall_comp_start : fall_comp_start + N_cF - 1)
-
-    spring_comp_start = fall_comp_start + N_cF
-    spring_comp_nodes = collect(spring_comp_start : spring_comp_start + N_cS - 1)
-
-    eos = spring_comp_start + N_cS
-
-    # --- Build preference lookup ---
-    fall_pref = _build_pref_lookup(fall_pref_df, default_preference_cost)
-    spring_pref = _build_pref_lookup(spring_pref_df, default_preference_cost)
-
-    # --- Generate edges ---
-    edges = String[]
-
-    # Header
-    push!(edges, "# Two-semester faculty-course matching edgelist (auto-generated)")
-    push!(edges, "# Format: source,target,cost,lb,ub")
-    push!(edges, "# Nodes: BOS=$bos, Faculty=$(faculty_nodes[1])-$(faculty_nodes[end]), FallGW=$(fall_gw_nodes[1])-$(fall_gw_nodes[end]), SpringGW=$(spring_gw_nodes[1])-$(spring_gw_nodes[end])")
-    push!(edges, "# FallCourses=$(fall_course_nodes[1])-$(fall_course_nodes[end]), SpringCourses=$(spring_course_nodes[1])-$(spring_course_nodes[end])")
-    push!(edges, "# FallComp=$(fall_comp_nodes[1])-$(fall_comp_nodes[end]), SpringComp=$(spring_comp_nodes[1])-$(spring_comp_nodes[end]), EOS=$eos")
-    push!(edges, "#")
-
-    # 1. BOS → Faculty (yearly capacity)
-    push!(edges, "# BOS -> Faculty (yearly teaching capacity)")
     for i in 1:N_f
-        u_fall = faculty_df[i, :U_fall]
-        u_spring = faculty_df[i, :U_spring]
-        yearly = u_fall + u_spring
-        push!(edges, "$bos,$(faculty_nodes[i]),0.0,0.0,$(Float64(yearly))")
+        yearly_load = faculty_df[i, :load_fall] + faculty_df[i, :load_spring]
+        push!(edges, "$bos,$(faculty_nodes[i]),0.0,0.0,$(Float64(yearly_load))")
     end
 
-    # 2. Faculty → Fall Gateway
-    push!(edges, "# Faculty -> Fall Gateway (fall semester cap)")
+    push!(edges, "# Faculty -> Fall Gateway (exact after flow balance)")
     for i in 1:N_f
-        u_fall = faculty_df[i, :U_fall]
-        push!(edges, "$(faculty_nodes[i]),$(fall_gw_nodes[i]),0.0,0.0,$(Float64(u_fall))")
+        load = faculty_df[i, :load_fall]
+        push!(edges, "$(faculty_nodes[i]),$(fall_gw_nodes[i]),0.0,0.0,$(Float64(load))")
     end
 
-    # 3. Faculty → Spring Gateway
-    push!(edges, "# Faculty -> Spring Gateway (spring semester cap)")
+    push!(edges, "# Faculty -> Spring Gateway (exact after flow balance)")
     for i in 1:N_f
-        u_spring = faculty_df[i, :U_spring]
-        push!(edges, "$(faculty_nodes[i]),$(spring_gw_nodes[i]),0.0,0.0,$(Float64(u_spring))")
+        load = faculty_df[i, :load_spring]
+        push!(edges, "$(faculty_nodes[i]),$(spring_gw_nodes[i]),0.0,0.0,$(Float64(load))")
     end
 
-    # 4. Fall Gateway → Fall Courses (with preference costs)
-    push!(edges, "# Fall Gateway -> Fall Courses (preference costs)")
-    for i in 1:N_f
-        name = faculty_df[i, :name]
-        for j in 1:N_cF
-            course = fall_courses_df[j, :course]
-            cost = get(get(fall_pref, name, Dict{String,Float64}()), course, default_preference_cost)
-            push!(edges, "$(fall_gw_nodes[i]),$(fall_course_nodes[j]),$(cost),0.0,1.0")
-        end
-    end
+    push!(edges, "# Fall Gateway -> Fall Courses")
+    _append_assignment_edges!(edges, faculty_df, fall_courses_df, fall_gw_nodes,
+        fall_course_nodes, fall_pref, assignment_kinds, :fall, preferred_cost)
 
-    # 5. Spring Gateway → Spring Courses (with preference costs)
-    push!(edges, "# Spring Gateway -> Spring Courses (preference costs)")
-    for i in 1:N_f
-        name = faculty_df[i, :name]
-        for j in 1:N_cS
-            course = spring_courses_df[j, :course]
-            cost = get(get(spring_pref, name, Dict{String,Float64}()), course, default_preference_cost)
-            push!(edges, "$(spring_gw_nodes[i]),$(spring_course_nodes[j]),$(cost),0.0,1.0")
-        end
-    end
+    push!(edges, "# Spring Gateway -> Spring Courses")
+    _append_assignment_edges!(edges, faculty_df, spring_courses_df, spring_gw_nodes,
+        spring_course_nodes, spring_pref, assignment_kinds, :spring, preferred_cost)
 
-    # 6. Fall Course → Fall Completion (lb=1 for required, ub=max_faculty)
-    push!(edges, "# Fall Course -> Fall Completion (lb=1 if required, ub=max_faculty)")
+    push!(edges, "# Fall Course -> Fall Completion (explicit staffing bounds)")
     for j in 1:N_cF
-        lb = _is_required(fall_courses_df, j) ? 1.0 : 0.0
-        ub = _max_faculty(fall_courses_df, j)
-        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,$(lb),$(ub)")
+        lb = Float64(fall_courses_df[j, :min_faculty])
+        ub = Float64(fall_courses_df[j, :max_faculty])
+        push!(edges, "$(fall_course_nodes[j]),$(fall_comp_nodes[j]),0.0,$lb,$ub")
     end
 
-    # 7. Spring Course → Spring Completion (lb=1 for required, ub=max_faculty)
-    push!(edges, "# Spring Course -> Spring Completion (lb=1 if required, ub=max_faculty)")
+    push!(edges, "# Spring Course -> Spring Completion (explicit staffing bounds)")
     for j in 1:N_cS
-        lb = _is_required(spring_courses_df, j) ? 1.0 : 0.0
-        ub = _max_faculty(spring_courses_df, j)
-        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,$(lb),$(ub)")
+        lb = Float64(spring_courses_df[j, :min_faculty])
+        ub = Float64(spring_courses_df[j, :max_faculty])
+        push!(edges, "$(spring_course_nodes[j]),$(spring_comp_nodes[j]),0.0,$lb,$ub")
     end
 
-    # 8. Fall Completion → EOS
     push!(edges, "# Fall Completion -> EOS")
     for j in 1:N_cF
-        ub = _max_faculty(fall_courses_df, j)
-        push!(edges, "$(fall_comp_nodes[j]),$eos,0.0,0.0,$(ub)")
+        ub = Float64(fall_courses_df[j, :max_faculty])
+        push!(edges, "$(fall_comp_nodes[j]),$eos,0.0,0.0,$ub")
     end
 
-    # 9. Spring Completion → EOS
     push!(edges, "# Spring Completion -> EOS")
     for j in 1:N_cS
-        ub = _max_faculty(spring_courses_df, j)
-        push!(edges, "$(spring_comp_nodes[j]),$eos,0.0,0.0,$(ub)")
+        ub = Float64(spring_courses_df[j, :max_faculty])
+        push!(edges, "$(spring_comp_nodes[j]),$eos,0.0,0.0,$ub")
     end
 
-    # --- Write edgelist ---
+    mkpath(dirname(output_edgelist))
     open(output_edgelist, "w") do io
-        for line in edges
-            println(io, line)
-        end
+        foreach(line -> println(io, line), edges)
     end
 
-    # --- Compute total flow ---
-    F = sum(faculty_df[!, :U_fall]) + sum(faculty_df[!, :U_spring])
+    F = sum(faculty_df[!, :load_fall]) + sum(faculty_df[!, :load_spring])
 
-    # --- Add computed node indices to course DataFrames ---
-    fall_courses_df[!, :coursenodeindex] = fall_course_nodes
-    fall_courses_df[!, :coursecompletionnode] = fall_comp_nodes
-    spring_courses_df[!, :coursenodeindex] = spring_course_nodes
-    spring_courses_df[!, :coursecompletionnode] = spring_comp_nodes
+    fall_courses_with_nodes = copy(fall_courses_df)
+    spring_courses_with_nodes = copy(spring_courses_df)
+    fall_courses_with_nodes[!, :coursenodeindex] = fall_course_nodes
+    fall_courses_with_nodes[!, :coursecompletionnode] = fall_comp_nodes
+    spring_courses_with_nodes[!, :coursenodeindex] = spring_course_nodes
+    spring_courses_with_nodes[!, :coursecompletionnode] = spring_comp_nodes
 
-    # --- Return metadata ---
     return Dict{String,Any}(
         "BOS" => bos,
         "EOS" => eos,
@@ -181,65 +127,70 @@ function generate_edgelist(;
         "fall_completion_nodes" => fall_comp_nodes,
         "spring_completion_nodes" => spring_comp_nodes,
         "F" => Float64(F),
-        "faculty_df" => faculty_df,
-        "fall_courses_df" => fall_courses_df,
-        "spring_courses_df" => spring_courses_df,
+        "faculty_df" => copy(faculty_df),
+        "fall_courses_df" => fall_courses_with_nodes,
+        "spring_courses_df" => spring_courses_with_nodes,
+        "assignments_df" => copy(assignments_df),
     )
 end
 
 
-"""
-    _is_required(courses_df, row_index) -> Bool
+function _append_assignment_edges!(
+    edges::Vector{String}, faculty_df::DataFrame, courses_df::DataFrame,
+    gateway_nodes::Vector{Int}, course_nodes::Vector{Int},
+    preferences::Dict{String,Dict{String,Float64}},
+    assignment_kinds::Dict{Tuple{String,String,Symbol},Symbol},
+    semester::Symbol, preferred_cost::Float64,
+)
+    for i in 1:nrow(faculty_df)
+        faculty = String(faculty_df[i, :name])
+        faculty_preferences = get(preferences, faculty, Dict{String,Float64}())
+        for j in 1:nrow(courses_df)
+            course = String(courses_df[j, :course])
+            kind = get(assignment_kinds, (faculty, course, semester), :automatic)
 
-Check if a course is marked as required. Returns `false` if the `required`
-column is missing from the DataFrame.
-"""
-function _is_required(courses_df::DataFrame, j::Int)
-    if hasproperty(courses_df, :required)
-        val = courses_df[j, :required]
-        return val === true || val == "true" || val == 1
+            if kind == :fixed
+                cost, lb, ub = 0.0, 1.0, 1.0
+            elseif kind == :preferred
+                cost, lb, ub = preferred_cost, 0.0, 1.0
+            elseif haskey(faculty_preferences, course)
+                cost, lb, ub = faculty_preferences[course], 0.0, 1.0
+            else
+                cost, lb, ub = 0.0, 0.0, 0.0
+            end
+
+            push!(edges, "$(gateway_nodes[i]),$(course_nodes[j]),$cost,$lb,$ub")
+        end
     end
-    return false
+    return edges
 end
 
 
-"""
-    _max_faculty(courses_df, row_index) -> Float64
-
-Return the maximum number of faculty that can be assigned to a course.
-Defaults to 1.0 if the `max_faculty` column is missing.
-"""
-function _max_faculty(courses_df::DataFrame, j::Int)
-    if hasproperty(courses_df, :max_faculty)
-        val = courses_df[j, :max_faculty]
-        return Float64(val)
-    end
-    return 1.0
-end
-
-
-"""
-    _build_pref_lookup(pref_df, default) -> Dict{String, Dict{String, Float64}}
-
-Build a nested lookup: faculty_name -> course_name -> preference_cost.
-"""
-function _build_pref_lookup(pref_df::DataFrame, default::Float64)
-    lookup = Dict{String, Dict{String, Float64}}()
+"""Build `faculty => course => preference` without filling missing values."""
+function _build_pref_lookup(pref_df::DataFrame)
+    lookup = Dict{String,Dict{String,Float64}}()
     course_cols = [String(c) for c in names(pref_df) if c != "lastname"]
 
     for row in eachrow(pref_df)
-        name = String(row[:lastname])
-        inner = Dict{String, Float64}()
-        for col in course_cols
-            val = row[Symbol(col)]
-            if !ismissing(val)
-                inner[col] = Float64(val)
-            else
-                inner[col] = default
+        faculty = String(row[:lastname])
+        values = Dict{String,Float64}()
+        for course in course_cols
+            value = row[Symbol(course)]
+            if !ismissing(value)
+                values[course] = Float64(value)
             end
         end
-        lookup[name] = inner
+        lookup[faculty] = values
     end
+    return lookup
+end
 
+
+function _build_assignment_lookup(assignments_df::DataFrame)
+    lookup = Dict{Tuple{String,String,Symbol},Symbol}()
+    for row in eachrow(assignments_df)
+        key = (String(row.faculty), String(row.course), Symbol(row.semester))
+        lookup[key] = Symbol(row.kind)
+    end
     return lookup
 end

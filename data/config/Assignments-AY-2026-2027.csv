@@ -1,0 +1,107 @@
+faculty,course,semester,kind
+
+# Fall: Core undergraduate
+Godwin,ENGRI-1120,fall,fixed
+DeLisa,ENGRI-1120,fall,fixed
+DeLisa,CHEME-2880,fall,fixed
+Kowal,ENGRD-2190,fall,fixed
+Yu,CHEME-3130,fall,fixed
+Goldfarb,CHEME-3240,fall,fixed
+Bauer,CHEME-4320,fall,fixed
+Escobedo,CHEME-4320,fall,fixed
+Kowal,CHEME-4320,fall,fixed
+Alabi,CHEME-4320,fall,fixed
+Celik,CHEME-4320,fall,fixed
+
+# Fall: Elective undergraduate
+Varner,CHEME-5660,fall,fixed
+Engstrom,CHEME-4840,fall,fixed
+
+# Fall: M.Eng
+Bauer,CHEME-5020,fall,fixed
+Bauer,CHEME-5650,fall,fixed
+Celik,CHEME-5650,fall,preferred
+Bauer,CHEME-5651,fall,fixed
+Celik,CHEME-5020,fall,fixed
+Varner,CHEME-5650,fall,fixed
+Varner,CHEME-5020,fall,fixed
+Cleary,CHEME-5770,fall,fixed
+
+# Fall: Graduate core
+Escobedo,CHEME-6110,fall,fixed
+Yue,CHEME-6130,fall,fixed
+Stroock,CHEME-6230,fall,fixed
+Kowal,CHEME-6920,fall,fixed
+Kowal,CHEME-7700,fall,fixed
+
+# Fall: Graduate elective
+Kalra,CHEME-5310,fall,fixed
+Putnam,CHEME-6310,fall,fixed
+Koch,CHEME-6440,fall,fixed
+Hanrath,CHEME-6660,fall,fixed
+Tester,CHEME-6660,fall,fixed
+Bauer,CHEME-6660,fall,fixed
+Tester,CHEME-6661,fall,fixed
+Murphy,CHEME-6661,fall,fixed
+Hanrath,CHEME-6662,fall,fixed
+Weill,CHEME-6670,fall,fixed
+Tester,CHEME-6670,fall,fixed
+Hanrath,CHEME-6671,fall,fixed
+Tester,CHEME-6671,fall,fixed
+Hanrath,CHEME-6681,fall,fixed
+Tester,CHEME-6681,fall,fixed
+Tester,CHEME-4880,fall,fixed
+You,CHEME-6800,fall,fixed
+You,CHEME-6810,fall,fixed
+You,CHEME-6830,fall,fixed
+You,CHEME-6840,fall,fixed
+Celik,CHEME-5990,fall,fixed
+Hanrath,CHEME-5870,fall,fixed
+Coso-Strong,CHEME-6950,fall,fixed
+Murtagh,CHEME-5320,fall,fixed
+Murtagh,CHEME-5730,fall,fixed
+Goldfarb,CHEME-7900,fall,fixed
+
+# Fall course development
+Li,CHEME-5999,fall,fixed
+Yang,CHEME-5999,fall,fixed
+
+# Spring 2027: Core undergraduate
+Stroock,CHEME-2200,spring,fixed
+Daniel,CHEME-3010,spring,fixed
+Hormozi,CHEME-3230,spring,fixed
+Yue,CHEME-3320,spring,fixed
+Coso-Strong,CHEME-3720,spring,fixed
+Cardenas,CHEME-3900,spring,fixed
+Bauer,CHEME-4620,spring,fixed
+
+# Spring: Elective undergraduate
+Goldfarb,CHEME-4xxx,spring,fixed
+Goldfarb,CHEME-7900,spring,fixed
+
+# Spring: Design
+Kowal,CHEME-4620,spring,fixed
+Kowal,CHEME-7700,spring,fixed
+Escobedo,CHEME-4620,spring,fixed
+Coso-Strong,CHEME-4620,spring,fixed
+Alabi,CHEME-6430,spring,fixed
+DeLisa,CHEME-4620,spring,fixed
+DeLisa,CHEME-5430,spring,fixed
+Alabi,CHEME-4620,spring,fixed
+
+# Spring: M.Eng
+Bauer,CHEME-5651,spring,fixed
+Bauer,CHEME-5650,spring,fixed
+Celik,CHEME-5650,spring,fixed
+Varner,CHEME-5650,spring,fixed
+Varner,CHEME-5820,spring,fixed
+
+# Spring: Graduate core
+Engstrom,CHEME-6420,spring,fixed
+
+# Spring: Graduate elective
+Celik,CHEME-5460,spring,fixed
+Escobedo,CHEME-5540,spring,fixed
+You,CHEME-6810,spring,fixed
+You,CHEME-6888,spring,fixed
+Celik,CHEME-5990,spring,fixed

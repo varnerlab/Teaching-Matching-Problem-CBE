@@ -1,41 +1,19 @@
-# setup paths -
-const _ROOT = @__DIR__;
-const _PATH_TO_DATA = joinpath(_ROOT, "data");
-const _PATH_TO_CONFIG = joinpath(_ROOT, "data", "config");
-const _PATH_TO_SRC = joinpath(_ROOT, "src");
-const _PATH_TO_RESULTS = joinpath(_ROOT, "results");
+const _ROOT = @__DIR__
+const _PATH_TO_DATA = joinpath(_ROOT, "data")
+const _PATH_TO_CONFIG = joinpath(_PATH_TO_DATA, "config")
+const _PATH_TO_SRC = joinpath(_ROOT, "src")
+const _PATH_TO_RESULTS = joinpath(_ROOT, "results")
 
-# if we are missing any packages, install them -
-using Pkg;
-if (isfile(joinpath(_ROOT, "Manifest.toml")) == false) # have manifest file, we are good. Otherwise, we need to instantiate the environment
-    Pkg.add(path="https://github.com/varnerlab/VLDataScienceMachineLearningPackage.jl.git")
-    Pkg.activate("."); Pkg.resolve(); Pkg.instantiate(); Pkg.update();
-end
-
-# load external packages -
-using VLDataScienceMachineLearningPackage
-using LinearAlgebra
-using BenchmarkTools
-using Statistics
-using Test
-using Images
-using TestImages
-using ImageMagick
-using ImageIO
-using DelimitedFiles
-using Plots
-using DataFrames
-using Random
-using Distributions
-using PrettyTables
+# Keep the command-line solver lightweight. The legacy visualization notebook
+# imports its additional plotting and file-format packages itself.
 using CSV
 using DataFrames
-using FileIO
-using JLD2
+using Dates
+using JSON
+using PrettyTables
+using SHA
+using VLDataScienceMachineLearningPackage
 
-# setup random number generator -
-Random.seed!(1234); # seed the random number generator for reproducibility
-
-# load my codes -
-include(joinpath(_PATH_TO_SRC, "Updates.jl"));
-include(joinpath(_PATH_TO_SRC, "BuildGraph.jl"));
+include(joinpath(_PATH_TO_SRC, "Updates.jl"))
+include(joinpath(_PATH_TO_SRC, "BuildGraph.jl"))
+include(joinpath(_PATH_TO_SRC, "TeachingMatching.jl"))

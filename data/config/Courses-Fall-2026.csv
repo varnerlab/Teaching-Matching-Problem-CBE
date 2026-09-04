@@ -1,43 +1,43 @@
-course,credits,required,max_faculty,title
-CHEME-2880,4,true,1,Biomolecular Engineering: Fundamentals and Applications
-CHEME-3130,4,true,1,Chemical Engineering Thermodynamics
-CHEME-3240,4,true,1,Heat and Mass Transfer
-CHEME-4320,4,true,5,Chemical Engineering Capstone Design I
-CHEME-4800,4,false,0,Principles of Computational Thinking for Engineers
-CHEME-4840,3,false,1,Microchemical and Microfluidic Systems
-CHEME-4880,3,false,1,"Global Food, Energy, and Water Nexus"
-CHEME-4998,1,false,1,International Research Internship
-CHEME-5020,3,false,3,Immersive Professional Development for Chemical Engineering M. Eng.
-CHEME-5310,3,false,1,Principles of Electrochemical Engineering
-CHEME-5320,3,false,1,"Glass: Structure, Properties and Modern Applications"
-CHEME-5650,1,false,3,Design Project
-CHEME-5651,1,false,1,M. Eng. Design Project Studio
-CHEME-5660,3,false,1,"Financial Data, Markets, and Mayhem for Scientists and Engineers"
-CHEME-5730,4,false,1,Interdisciplinary Design Concepts
-CHEME-5770,3,false,1,Principles in Process and Lean Engineering
-CHEME-5800,4,false,1,Principles of Computational Thinking for Engineers
-CHEME-5870,1,false,1,Energy Seminar I
-CHEME-5990,1,false,1,Medical and Industrial Biotechnology Seminar
-CHEME-5999,1,false,2,Special Projects in Chemical Engineering
-CHEME-6110,3,true,1,Mathematical Methods of Chemical Engineering Analysis
-CHEME-6130,3,true,1,Advanced Chemical Engineering Thermodynamics
-CHEME-6230,3,true,1,Transport Phenomena for Chemical and Biomolecular Engineering
-CHEME-6310,3,false,1,Engineering Principles for Drug Delivery
-CHEME-6440,3,false,1,Colloids and Aerosols
-CHEME-6660,3,false,3,Sustainable Energy Choices – Technologies and Economics
-CHEME-6661,1,false,2,Bioenergy and Biofuels Module
-CHEME-6662,1,false,1,Solar Energy Module
-CHEME-6670,1,false,2,Fossil Fuels Module
-CHEME-6671,1,false,2,Nuclear Energy Module
-CHEME-6681,1,false,2,Energy Analysis Project
-CHEME-6780,3,false,1,"Global Food, Energy, and Water Nexus"
-CHEME-6800,4,false,1,Computational Optimization
-CHEME-6810,3,false,1,AI for Sustainability
-CHEME-6830,1,false,1,AI for Energy Systems
-CHEME-6840,1,false,1,AI for Digital Agriculture
-CHEME-6920,1,false,1,Principles and Practices of Graduate Research
-CHEME-6950,3,false,1,Design for Learning: Bridging STEM Education Research and Practice
-CHEME-7700,1,false,1,Chemical Engineering Graduate Research Seminar
-CHEME-7900,1,false,1,Chemical Engineering Seminar
-ENGRI-1120,3,true,2,"Feast! Chemical and Biomolecular Processes and Products through Food"
-ENGRD-2190,4,true,1,Chemical Process Design and Analysis
+course,credits,min_faculty,max_faculty,title
+CHEME-2880,4,1,1,Biomolecular Engineering: Fundamentals and Applications
+CHEME-3130,4,1,1,Chemical Engineering Thermodynamics
+CHEME-3240,4,1,1,Heat and Mass Transfer
+CHEME-4320,4,5,5,Chemical Engineering Capstone Design I
+CHEME-4800,4,0,0,Principles of Computational Thinking for Engineers
+CHEME-4840,3,0,1,Microchemical and Microfluidic Systems
+CHEME-4880,3,0,1,"Global Food, Energy, and Water Nexus"
+CHEME-4998,1,0,1,International Research Internship
+CHEME-5020,3,0,3,Immersive Professional Development for Chemical Engineering M. Eng.
+CHEME-5310,3,0,1,Principles of Electrochemical Engineering
+CHEME-5320,3,0,1,"Glass: Structure, Properties and Modern Applications"
+CHEME-5650,1,0,3,Design Project
+CHEME-5651,1,0,1,M. Eng. Design Project Studio
+CHEME-5660,3,0,1,"Financial Data, Markets, and Mayhem for Scientists and Engineers"
+CHEME-5730,4,0,1,Interdisciplinary Design Concepts
+CHEME-5770,3,0,1,Principles in Process and Lean Engineering
+CHEME-5800,4,0,1,Principles of Computational Thinking for Engineers
+CHEME-5870,1,0,1,Energy Seminar I
+CHEME-5990,1,0,1,Medical and Industrial Biotechnology Seminar
+CHEME-5999,1,0,2,Special Projects in Chemical Engineering
+CHEME-6110,3,1,1,Mathematical Methods of Chemical Engineering Analysis
+CHEME-6130,3,1,1,Advanced Chemical Engineering Thermodynamics
+CHEME-6230,3,1,1,Transport Phenomena for Chemical and Biomolecular Engineering
+CHEME-6310,3,0,1,Engineering Principles for Drug Delivery
+CHEME-6440,3,0,1,Colloids and Aerosols
+CHEME-6660,3,0,3,Sustainable Energy Choices – Technologies and Economics
+CHEME-6661,1,0,2,Bioenergy and Biofuels Module
+CHEME-6662,1,0,1,Solar Energy Module
+CHEME-6670,1,0,2,Fossil Fuels Module
+CHEME-6671,1,0,2,Nuclear Energy Module
+CHEME-6681,1,0,2,Energy Analysis Project
+CHEME-6780,3,0,1,"Global Food, Energy, and Water Nexus"
+CHEME-6800,4,0,1,Computational Optimization
+CHEME-6810,3,0,1,AI for Sustainability
+CHEME-6830,1,0,1,AI for Energy Systems
+CHEME-6840,1,0,1,AI for Digital Agriculture
+CHEME-6920,1,0,1,Principles and Practices of Graduate Research
+CHEME-6950,3,0,1,Design for Learning: Bridging STEM Education Research and Practice
+CHEME-7700,1,0,1,Chemical Engineering Graduate Research Seminar
+CHEME-7900,1,0,1,Chemical Engineering Seminar
+ENGRI-1120,3,2,2,"Feast! Chemical and Biomolecular Processes and Products through Food"
+ENGRD-2190,4,1,1,Chemical Process Design and Analysis
